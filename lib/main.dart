@@ -13,7 +13,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  static final String title = 'Drag & Drop ListView';
+  static final String title = 'Timeline';
 
   @override
   Widget build(BuildContext context) => MaterialApp(
@@ -113,19 +113,28 @@ class _MainPage extends State<MainPage> {
   void onReorderListItem(
     int oldItemIndex,
     int oldListIndex,
-    int newItemIndex,
-    int newListIndex,
+    int newItemIndex ,
+     int newListIndex
 
   ) {
     setState(() {
       final oldListItems = lists[oldListIndex].children;
       final newListItems = lists[newListIndex].children;
 
-     // Widget name =  newListItems[oldItemIndex].child;
+      // Widget name =  newListItems[oldItemIndex].child;
+      print("oldItemIndex - $oldItemIndex");
+      print("oldListIndex - $oldListIndex");
+      print("newItemIndex - $newItemIndex");
+      print("newListIndex - $newListIndex");
+
+     print(lists[oldItemIndex].children.single.child);
+
+
 
 
       final movedItem = oldListItems.removeAt(oldItemIndex);
       newListItems.insert(newItemIndex, movedItem);
+
     });
   }
 
