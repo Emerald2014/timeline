@@ -20,7 +20,7 @@ class Drag extends StatefulWidget {
 
 class _DragState extends State<Drag> {
   List handCardList = cardListOnHand;
-  List boardCardList = cardListOnBoard;
+  List<GameCard> boardCardList = cardListOnBoard;
 
   @override
   Widget build(BuildContext context) {
@@ -161,7 +161,7 @@ class _DragState extends State<Drag> {
 
   bool compareYear(int indexBoardCard, GameCard cardFromHand) {
     bool isHandCardYearLatest = true;
-    GameCard prevBoardCard = boardCardList[indexBoardCard - 1];
+    GameCard prevBoardCard = boardCardList[indexBoardCard ];
     int yearPrevBoardCard = prevBoardCard.year;
     GameCard nextBoardCard = boardCardList[indexBoardCard + 1];
     int yearNextBoardCard = nextBoardCard.year;
@@ -182,17 +182,34 @@ class _DragState extends State<Drag> {
       builder: (context, candidates, rejects) {
         return candidates.length > 0
             ? _buildDropPreview(context, candidates[0]!)
-            : Container(
+            : const SizedBox(
                 width: 5,
                 height: 5,
               );
       },
       onWillAccept: (value) => !boardCardList.contains(value),
       onAccept: (value) {
-        setState(() {
-          boardCardList.insert(index + 1, value);
-          handCardList.remove(value);
-        });
+        GameCard item = boardCardList[0];
+
+        for(var i in handCardList) {
+          if(value == i.name) { item = i;}
+        }
+        if(compareYear(index, item)) {
+          print("YES");
+          setState(() {
+            boardCardList.insert(index + 1, item);
+            handCardList.remove(item);
+          });
+          // setState(() {
+          //   boardCardList.insert(index + 1, value);
+          //   handCardList.remove(value);
+          // });
+        } else {
+          print("No");
+        }
+        print("Value = $value");
+
+
       },
     );
   }
