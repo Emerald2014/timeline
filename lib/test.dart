@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:timeline/data/card_list.dart';
+import 'package:timeline/model/game_card.dart';
 
 void main() {
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-
   @override
-  Widget build(BuildContext context) =>
-      MaterialApp(
+  Widget build(BuildContext context) => MaterialApp(
         home: Drag(),
       );
 }
@@ -19,8 +19,8 @@ class Drag extends StatefulWidget {
 }
 
 class _DragState extends State<Drag> {
-  List listA = ["1", "2", "3"];
-  List listB = ["4", "5", "6"];
+  List handCardList = cardListOnHand;
+  List boardCardList = cardListOnBoard;
 
   @override
   Widget build(BuildContext context) {
@@ -32,16 +32,16 @@ class _DragState extends State<Drag> {
 //            list view separated will build a widget between 2 list items to act as a separator
             Expanded(
                 child: ListView.separated(
-                  itemBuilder: _buildListAItems,
-                  separatorBuilder: _buildDragTargetsA,
-                  itemCount: listA.length,
-                )),
+              itemBuilder: _buildListAItems,
+              separatorBuilder: _buildDragTargetsA,
+              itemCount: handCardList.length,
+            )),
             Expanded(
                 child: ListView.separated(
-                  itemBuilder: _buildListBItems,
-                  separatorBuilder: _buildDragTargetsB,
-                  itemCount: listB.length,
-                )),
+              itemBuilder: _buildListBItems,
+              separatorBuilder: _buildDragTargetsB,
+              itemCount: boardCardList.length,
+            )),
           ],
         ),
       ),
@@ -50,15 +50,17 @@ class _DragState extends State<Drag> {
 
 //  builds the widgets for List B items
   Widget _buildListBItems(BuildContext context, int index) {
+    GameCard itemB = boardCardList[index];
+
     return Draggable<String>(
 //      the value of this draggable is set using data
-      data: listB[index],
+      data: itemB.name,
 //      the widget to show under the users finger being dragged
       feedback: Card(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
-            listB[index],
+            itemB.name,
             style: TextStyle(fontSize: 20),
           ),
         ),
@@ -74,7 +76,7 @@ class _DragState extends State<Drag> {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
-            listB[index],
+            itemB.name,
             style: TextStyle(fontSize: 20),
           ),
         ),
@@ -84,13 +86,14 @@ class _DragState extends State<Drag> {
 
 //  builds the widgets for List A items
   Widget _buildListAItems(BuildContext context, int index) {
+    GameCard itemA = handCardList[index];
     return Draggable<String>(
-      data: listA[index],
+      data: itemA.name,
       feedback: Card(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
-            listA[index],
+            itemA.name,
             style: TextStyle(fontSize: 20),
           ),
         ),
@@ -104,7 +107,7 @@ class _DragState extends State<Drag> {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
-            listA[index],
+            itemA.name,
             style: TextStyle(fontSize: 20),
           ),
         ),
@@ -128,45 +131,67 @@ class _DragState extends State<Drag> {
 
 //  builds DragTargets used as separators between list items/widgets for list A
   Widget _buildDragTargetsA(BuildContext context, int index) {
-    return DragTarget<String>(
+    return DragTarget<GameCard>(
 //      builder responsible to build a widget based on whether there is an item being dropped or not
       builder: (context, candidates, rejects) {
-        return candidates.length > 0 ? _buildDropPreview(context, candidates[0]!):
-        Container(
-          width: 5,
-          height: 5,
-        );
+        return candidates.length > 0
+            ? _buildDropPreview(context, candidates[0]!.name )
+            : Container(
+                width: 5,
+                height: 5,
+              );
       },
 //      condition on to accept the item or not
-      onWillAccept: (value)=>!listA.contains(value),
+//       onWillAccept: (value) => !listA.contains(value),
 //      what to do when an item is accepted
       onAccept: (value) {
-        if (int.parse(listB[listB.indexOf(value)]) > int.parse(listA[index])) {
-          setState(() {
-            listA.insert(index + 1, value);
-            listB.remove(value);
-          });
-        } else print("No");
 
+        if(compareYear(index, value)) {
+          print("YES");
+          // setState(() {
+          //   boardCardList.insert(index + 1, value);
+          //   handCardList.remove(value);
+          // });
+        } else {
+          print("No");
+        }
       },
     );
+  }
+
+  bool compareYear(int indexBoardCard, GameCard cardFromHand) {
+    bool isHandCardYearLatest = true;
+    GameCard prevBoardCard = boardCardList[indexBoardCard - 1];
+    int yearPrevBoardCard = prevBoardCard.year;
+    GameCard nextBoardCard = boardCardList[indexBoardCard + 1];
+    int yearNextBoardCard = nextBoardCard.year;
+    if (indexBoardCard > 0) {
+      isHandCardYearLatest = cardFromHand.year > yearPrevBoardCard;
+    } else if (indexBoardCard == 0) {
+      isHandCardYearLatest = cardFromHand.year < yearNextBoardCard;
+    } else {
+      false;
+    }
+
+    return isHandCardYearLatest;
   }
 
 //  builds drag targets for list B
   Widget _buildDragTargetsB(BuildContext context, int index) {
     return DragTarget<String>(
       builder: (context, candidates, rejects) {
-        return candidates.length > 0 ? _buildDropPreview(context, candidates[0]!):
-        Container(
-          width: 5,
-          height: 5,
-        );
+        return candidates.length > 0
+            ? _buildDropPreview(context, candidates[0]!)
+            : Container(
+                width: 5,
+                height: 5,
+              );
       },
-      onWillAccept: (value)=>!listB.contains(value),
+      onWillAccept: (value) => !boardCardList.contains(value),
       onAccept: (value) {
         setState(() {
-          listB.insert(index + 1, value);
-          listA.remove(value);
+          boardCardList.insert(index + 1, value);
+          handCardList.remove(value);
         });
       },
     );
