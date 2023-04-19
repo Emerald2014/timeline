@@ -29,18 +29,21 @@ class _DragState extends State<Drag> {
       body: SafeArea(
         child: Column(
           children: [
-//            list view separated will build a widget between 2 list items to act as a separator
+            Text("Игровой стол"),
             Expanded(
                 child: ListView.separated(
-              itemBuilder: _buildListAItems,
+              itemBuilder: listBoardCard,
+              separatorBuilder: _buildDragTargetsBoard,
+              itemCount: boardCardList.length,
+              scrollDirection: Axis.horizontal,
+            )),
+//            list view separated will build a widget between 2 list items to act as a separator
+            Text("Рука игрока"),
+            Expanded(
+                child: ListView.separated(
+              itemBuilder: _buildListHandCard,
               separatorBuilder: _buildDragTargetsA,
               itemCount: handCardList.length,
-            )),
-            Expanded(
-                child: ListView.separated(
-              itemBuilder: _buildListBItems,
-              separatorBuilder: _buildDragTargetsB,
-              itemCount: boardCardList.length,
             )),
           ],
         ),
@@ -48,52 +51,38 @@ class _DragState extends State<Drag> {
     );
   }
 
-//  builds the widgets for List B items
-  Widget _buildListBItems(BuildContext context, int index) {
-    GameCard itemB = boardCardList[index];
+  Widget listBoardCard(BuildContext context, int index) {
+    GameCard boardCard = boardCardList[index];
 
-    return Draggable<String>(
-//      the value of this draggable is set using data
-      data: itemB.name,
-//      the widget to show under the users finger being dragged
-      feedback: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            itemB.name,
-            style: TextStyle(fontSize: 20),
+    return Card(
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              boardCard.name,
+              style: TextStyle(fontSize: 20),
+            ),
           ),
-        ),
-      ),
-//      what to display in the child's position when being dragged
-      childWhenDragging: Container(
-        color: Colors.grey,
-        width: 40,
-        height: 40,
-      ),
-//      widget in idle state
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            itemB.name,
-            style: TextStyle(fontSize: 20),
-          ),
-        ),
+          Text(
+            boardCard.year.toString(),
+            style: TextStyle(fontSize: 12),
+          )
+        ],
       ),
     );
   }
 
 //  builds the widgets for List A items
-  Widget _buildListAItems(BuildContext context, int index) {
-    GameCard itemA = handCardList[index];
+  Widget _buildListHandCard(BuildContext context, int index) {
+    GameCard handCard = handCardList[index];
     return Draggable<String>(
-      data: itemA.name,
+      data: handCard.name,
       feedback: Card(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
-            itemA.name,
+            handCard.name,
             style: TextStyle(fontSize: 20),
           ),
         ),
@@ -107,18 +96,28 @@ class _DragState extends State<Drag> {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
-            itemA.name,
+            handCard.name,
             style: TextStyle(fontSize: 20),
           ),
         ),
       ),
+      onDragStarted: () {
+
+        final snackBar= SnackBar(
+          content: Text(
+            'Выбрана карта ${handCard.name}',
+          ),
+                  );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+      },
     );
   }
 
 //  will return a widget used as an indicator for the drop position
   Widget _buildDropPreview(BuildContext context, String value) {
     return Card(
-      color: Colors.lightBlue[200],
+      color: Colors.redAccent[200],
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Text(
@@ -135,7 +134,7 @@ class _DragState extends State<Drag> {
 //      builder responsible to build a widget based on whether there is an item being dropped or not
       builder: (context, candidates, rejects) {
         return candidates.length > 0
-            ? _buildDropPreview(context, candidates[0]!.name )
+            ? _buildDropPreview(context, candidates[0]!.name)
             : Container(
                 width: 5,
                 height: 5,
@@ -145,8 +144,7 @@ class _DragState extends State<Drag> {
 //       onWillAccept: (value) => !listA.contains(value),
 //      what to do when an item is accepted
       onAccept: (value) {
-
-        if(compareYear(index, value)) {
+        if (compareYear(index, value)) {
           print("YES");
           // setState(() {
           //   boardCardList.insert(index + 1, value);
@@ -161,7 +159,7 @@ class _DragState extends State<Drag> {
 
   bool compareYear(int indexBoardCard, GameCard cardFromHand) {
     bool isHandCardYearLatest = true;
-    GameCard prevBoardCard = boardCardList[indexBoardCard ];
+    GameCard prevBoardCard = boardCardList[indexBoardCard];
     int yearPrevBoardCard = prevBoardCard.year;
     GameCard nextBoardCard = boardCardList[indexBoardCard + 1];
     int yearNextBoardCard = nextBoardCard.year;
@@ -177,7 +175,7 @@ class _DragState extends State<Drag> {
   }
 
 //  builds drag targets for list B
-  Widget _buildDragTargetsB(BuildContext context, int index) {
+  Widget _buildDragTargetsBoard(BuildContext context, int index) {
     return DragTarget<String>(
       builder: (context, candidates, rejects) {
         return candidates.length > 0
@@ -191,10 +189,12 @@ class _DragState extends State<Drag> {
       onAccept: (value) {
         GameCard item = boardCardList[0];
 
-        for(var i in handCardList) {
-          if(value == i.name) { item = i;}
+        for (var i in handCardList) {
+          if (value == i.name) {
+            item = i;
+          }
         }
-        if(compareYear(index, item)) {
+        if (compareYear(index, item)) {
           print("YES");
           setState(() {
             boardCardList.insert(index + 1, item);
@@ -208,8 +208,6 @@ class _DragState extends State<Drag> {
           print("No");
         }
         print("Value = $value");
-
-
       },
     );
   }
