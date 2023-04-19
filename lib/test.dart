@@ -8,7 +8,8 @@ void main() {
 
 class MyApp extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => MaterialApp(
+  Widget build(BuildContext context) =>
+      MaterialApp(
         home: Drag(),
       );
 }
@@ -32,19 +33,19 @@ class _DragState extends State<Drag> {
             Text("Игровой стол"),
             Expanded(
                 child: ListView.separated(
-              itemBuilder: listBoardCard,
-              separatorBuilder: _buildDragTargetsBoard,
-              itemCount: boardCardList.length,
-              scrollDirection: Axis.horizontal,
-            )),
+                  itemBuilder: listBoardCard,
+                  separatorBuilder: _buildDragTargetsBoard,
+                  itemCount: boardCardList.length,
+                  scrollDirection: Axis.horizontal,
+                )),
 //            list view separated will build a widget between 2 list items to act as a separator
             Text("Рука игрока"),
             Expanded(
-                child: ListView.separated(
-              itemBuilder: _buildListHandCard,
-              separatorBuilder: _buildDragTargetsA,
-              itemCount: handCardList.length,
-            )),
+                child: ListView.builder(
+                  itemBuilder: _buildListHandCard,
+                  // separatorBuilder: _buildDragTargetsA,
+                  itemCount: handCardList.length,
+                )),
           ],
         ),
       ),
@@ -54,7 +55,13 @@ class _DragState extends State<Drag> {
   Widget listBoardCard(BuildContext context, int index) {
     GameCard boardCard = boardCardList[index];
 
-    return Card(
+    return boardCardList[index].id == -1
+        ? Container(
+      // color: Colors.orangeAccent,
+      // width: 50,
+      // height: 50,
+    )
+        : Card(
       child: Column(
         children: [
           Padding(
@@ -76,6 +83,13 @@ class _DragState extends State<Drag> {
 //  builds the widgets for List A items
   Widget _buildListHandCard(BuildContext context, int index) {
     GameCard handCard = handCardList[index];
+    GameCard item = boardCardList[0];
+
+    for (var i in handCardList) {
+      if (0 == i.id) {
+        item = i;
+      }
+    }
     return Draggable<String>(
       data: handCard.name,
       feedback: Card(
@@ -102,14 +116,33 @@ class _DragState extends State<Drag> {
         ),
       ),
       onDragStarted: () {
-
-        final snackBar= SnackBar(
+        final snackBar = SnackBar(
           content: Text(
             'Выбрана карта ${handCard.name}',
           ),
-                  );
+        );
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
+        setState(() {
+          boardCardList.insert(0, GameCard(name: "", id: -1, year: 0));
+          boardCardList.insert(
+              boardCardList.length, GameCard(name: "", id: -1, year: 0));
+        });
+      },
+      onDragCompleted: () {
+        setState(() {
+          boardCardList.removeWhere((item) => item.id == -1);
+        });
+      },
+      onDraggableCanceled: (Velocity velocity, Offset offset) {
+        setState(() {
+          boardCardList.removeWhere((item) => item.id == -1);
+        });
+      },
+      onDragEnd: (DraggableDetails details) {
+        setState(() {
+          boardCardList.removeWhere((item) => item.id == -1);
+        });
       },
     );
   }
@@ -128,6 +161,7 @@ class _DragState extends State<Drag> {
     );
   }
 
+/*
 //  builds DragTargets used as separators between list items/widgets for list A
   Widget _buildDragTargetsA(BuildContext context, int index) {
     return DragTarget<GameCard>(
@@ -155,45 +189,61 @@ class _DragState extends State<Drag> {
         }
       },
     );
-  }
+  }*/
 
   bool compareYear(int indexBoardCard, GameCard cardFromHand) {
-    bool isHandCardYearLatest = true;
+    bool isTruePosition = true;
     GameCard prevBoardCard = boardCardList[indexBoardCard];
-    int yearPrevBoardCard = prevBoardCard.year;
     GameCard nextBoardCard = boardCardList[indexBoardCard + 1];
-    int yearNextBoardCard = nextBoardCard.year;
-    if (indexBoardCard > 0) {
-      isHandCardYearLatest = cardFromHand.year > yearPrevBoardCard;
+    print("prevBoardCard = ${prevBoardCard.year}");
+    print("nextBoardCard = ${nextBoardCard.year}");
+    print("myCard = ${cardFromHand.year}");
+    print("length = ${boardCardList.length}");
+    print("index = ${indexBoardCard}");
+
+
+    if (indexBoardCard > 0 && indexBoardCard < boardCardList.length-2) {
+      print("first IF");
+      isTruePosition = cardFromHand.year > prevBoardCard.year &&
+          cardFromHand.year < nextBoardCard.year;
     } else if (indexBoardCard == 0) {
-      isHandCardYearLatest = cardFromHand.year < yearNextBoardCard;
+      print("Second IF");
+
+      isTruePosition = cardFromHand.year < nextBoardCard.year;
+    } else if (indexBoardCard == boardCardList.length-2) {
+      print("Third IF");
+
+      isTruePosition = cardFromHand.year > prevBoardCard.year;
     } else {
       false;
     }
-
-    return isHandCardYearLatest;
+    return isTruePosition;
   }
 
 //  builds drag targets for list B
   Widget _buildDragTargetsBoard(BuildContext context, int index) {
     return DragTarget<String>(
       builder: (context, candidates, rejects) {
-        return candidates.length > 0
+        return candidates.isNotEmpty
             ? _buildDropPreview(context, candidates[0]!)
             : const SizedBox(
-                width: 5,
-                height: 5,
-              );
+          width: 5,
+          height: 5,
+        );
       },
       onWillAccept: (value) => !boardCardList.contains(value),
       onAccept: (value) {
+
         GameCard item = boardCardList[0];
+
 
         for (var i in handCardList) {
           if (value == i.name) {
             item = i;
           }
         }
+        print("length = ${boardCardList.length}");
+        print("index = ${index}");
         if (compareYear(index, item)) {
           print("YES");
           setState(() {
