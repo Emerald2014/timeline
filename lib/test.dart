@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:timeline/data/card_list.dart';
 import 'package:timeline/model/game_card.dart';
+import 'dart:math';
 
 void main() {
   runApp(MyApp());
@@ -20,8 +21,18 @@ class Drag extends StatefulWidget {
 }
 
 class _DragState extends State<Drag> {
+  int randomIndex = Random().nextInt(cardListOnHand.length);
+
+  // List<GameCard> boardCardList = List.empty();
   List handCardList = cardListOnHand;
-  List<GameCard> boardCardList = cardListOnBoard;
+  List boardCardList = [];
+
+  @override
+  void initState() {
+boardCardList.add(handCardList[randomIndex]);
+handCardList.removeAt(randomIndex);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,13 +42,16 @@ class _DragState extends State<Drag> {
         child: Column(
           children: [
             Text("Игровой стол"),
-            Expanded(
-                child: ListView.separated(
-                  itemBuilder: listBoardCard,
-                  separatorBuilder: _buildDragTargetsBoard,
-                  itemCount: boardCardList.length,
-                  scrollDirection: Axis.horizontal,
-                )),
+            SizedBox(
+              height: 150,
+              child: Expanded(
+                  child: ListView.separated(
+                    itemBuilder: listBoardCard,
+                    separatorBuilder: _buildDragTargetsBoard,
+                    itemCount: boardCardList.length,
+                    scrollDirection: Axis.horizontal,
+                  )),
+            ),
 //            list view separated will build a widget between 2 list items to act as a separator
             Text("Рука игрока"),
             Expanded(
@@ -62,20 +76,23 @@ class _DragState extends State<Drag> {
       // height: 50,
     )
         : Card(
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              boardCard.name,
-              style: TextStyle(fontSize: 20),
+      child: SizedBox(
+        width: 100,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                boardCard.name,
+                style: TextStyle(fontSize: 10),
+              ),
             ),
-          ),
-          Text(
-            boardCard.year.toString(),
-            style: TextStyle(fontSize: 12),
-          )
-        ],
+            Text(
+              boardCard.year.toString(),
+              style: TextStyle(fontSize: 8),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -93,11 +110,14 @@ class _DragState extends State<Drag> {
     return Draggable<String>(
       data: handCard.name,
       feedback: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            handCard.name,
-            style: TextStyle(fontSize: 20),
+        child: SizedBox(
+          width: 100,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              handCard.name,
+              style: TextStyle(fontSize: 10),
+            ),
           ),
         ),
       ),
@@ -107,11 +127,14 @@ class _DragState extends State<Drag> {
         height: 40,
       ),
       child: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            handCard.name,
-            style: TextStyle(fontSize: 20),
+        child: SizedBox(
+          width: 100,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              handCard.name,
+              style: TextStyle(fontSize: 10),
+            ),
           ),
         ),
       ),
@@ -151,11 +174,14 @@ class _DragState extends State<Drag> {
   Widget _buildDropPreview(BuildContext context, String value) {
     return Card(
       color: Colors.redAccent[200],
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text(
-          value,
-          style: TextStyle(fontSize: 20),
+      child: SizedBox(
+        width: 50,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            value,
+            style: TextStyle(fontSize: 8),
+          ),
         ),
       ),
     );
@@ -200,6 +226,7 @@ class _DragState extends State<Drag> {
     print("myCard = ${cardFromHand.year}");
     print("length = ${boardCardList.length}");
     print("index = ${indexBoardCard}");
+
 
 
     if (indexBoardCard > 0 && indexBoardCard < boardCardList.length-2) {
