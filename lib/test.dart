@@ -25,6 +25,7 @@ class _DragState extends State<Drag> {
   // List<GameCard> boardCardList = List.empty();
   List handCardList = [];
   List boardCardList = [];
+  int indexOfLastCard = -1;
 
   @override
   void initState() {
@@ -49,7 +50,8 @@ class _DragState extends State<Drag> {
             SizedBox(
               height: 150,
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 10),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 5.0, horizontal: 10),
                 child: Expanded(
                     child: Center(
                   child: ListView.separated(
@@ -86,12 +88,11 @@ class _DragState extends State<Drag> {
     GameCard boardCard = boardCardList[index];
 
     return boardCardList[index].id == -1
-        ? Container(
-            // color: Colors.orangeAccent,
-            // width: 50,
-            // height: 50,
-            )
+        ? Container()
         : Card(
+            color: indexOfLastCard == index
+                ? Colors.lightGreenAccent
+                : Colors.white,
             child: SizedBox(
               width: 100,
               child: Column(
@@ -102,7 +103,6 @@ class _DragState extends State<Drag> {
                       boardCard.name,
                       style: TextStyle(fontSize: 10),
                       textAlign: TextAlign.center,
-
                     ),
                   ),
                   Text(
@@ -119,13 +119,7 @@ class _DragState extends State<Drag> {
 //  builds the widgets for List A items
   Widget _buildListHandCard(BuildContext context, int index) {
     GameCard handCard = handCardList[index];
-    GameCard item = boardCardList[0];
 
-    for (var i in handCardList) {
-      if (0 == i.id) {
-        item = i;
-      }
-    }
     return Draggable<String>(
       data: handCard.name,
       feedback: Card(
@@ -162,32 +156,29 @@ class _DragState extends State<Drag> {
       },
       onDragCompleted: () {
         setState(() {
-          boardCardList.removeWhere((item) => item.id == -1);
-          boardCardList.insert(0, GameCard(name: "", id: -1, year: 0));
-          boardCardList.insert(
-              boardCardList.length, GameCard(name: "", id: -1, year: 0));
+          removeAndAddCard();
         });
       },
       onDraggableCanceled: (Velocity velocity, Offset offset) {
         setState(() {
-          boardCardList.removeWhere((item) => item.id == -1);
-          boardCardList.insert(0, GameCard(name: "", id: -1, year: 0));
-          boardCardList.insert(
-              boardCardList.length, GameCard(name: "", id: -1, year: 0));
+          removeAndAddCard();
         });
       },
       onDragEnd: (DraggableDetails details) {
         setState(() {
-          boardCardList.removeWhere((item) => item.id == -1);
-          boardCardList.insert(0, GameCard(name: "", id: -1, year: 0));
-          boardCardList.insert(
-              boardCardList.length, GameCard(name: "", id: -1, year: 0));
+          removeAndAddCard();
         });
       },
     );
   }
 
-//  will return a widget used as an indicator for the drop position
+  void removeAndAddCard() {
+    boardCardList.removeWhere((item) => item.id == -1);
+    boardCardList.insert(0, GameCard(name: "", id: -1, year: 0));
+    boardCardList.insert(
+        boardCardList.length, GameCard(name: "", id: -1, year: 0));
+  }
+
   Widget _buildDropPreview(BuildContext context, String value) {
     return Card(
       color: Colors.redAccent[200],
@@ -204,57 +195,17 @@ class _DragState extends State<Drag> {
     );
   }
 
-/*
-//  builds DragTargets used as separators between list items/widgets for list A
-  Widget _buildDragTargetsA(BuildContext context, int index) {
-    return DragTarget<GameCard>(
-//      builder responsible to build a widget based on whether there is an item being dropped or not
-      builder: (context, candidates, rejects) {
-        return candidates.length > 0
-            ? _buildDropPreview(context, candidates[0]!.name)
-            : Container(
-                width: 5,
-                height: 5,
-              );
-      },
-//      condition on to accept the item or not
-//       onWillAccept: (value) => !listA.contains(value),
-//      what to do when an item is accepted
-      onAccept: (value) {
-        if (compareYear(index, value)) {
-          print("YES");
-          // setState(() {
-          //   boardCardList.insert(index + 1, value);
-          //   handCardList.remove(value);
-          // });
-        } else {
-          print("No");
-        }
-      },
-    );
-  }*/
-
   bool compareYear(int indexBoardCard, GameCard cardFromHand) {
     bool isTruePosition = true;
     GameCard prevBoardCard = boardCardList[indexBoardCard];
     GameCard nextBoardCard = boardCardList[indexBoardCard + 1];
-    print("prevBoardCard = ${prevBoardCard.year}");
-    print("nextBoardCard = ${nextBoardCard.year}");
-    print("myCard = ${cardFromHand.year}");
-    print("length = ${boardCardList.length}");
-    print("index = ${indexBoardCard}");
 
     if (indexBoardCard > 0 && indexBoardCard < boardCardList.length - 2) {
-      print("first IF");
       isTruePosition = cardFromHand.year > prevBoardCard.year &&
           cardFromHand.year < nextBoardCard.year;
     } else if (indexBoardCard == 0) {
-      print("Second IF");
-
       isTruePosition = cardFromHand.year < nextBoardCard.year;
     } else if (indexBoardCard == boardCardList.length - 2) {
-      print("Third IF");
-
       isTruePosition = cardFromHand.year > prevBoardCard.year;
     } else {
       false;
@@ -262,7 +213,6 @@ class _DragState extends State<Drag> {
     return isTruePosition;
   }
 
-//  builds drag targets for list B
   Widget _buildDragTargetsBoard(BuildContext context, int index) {
     return DragTarget<String>(
       builder: (context, candidates, rejects) {
@@ -282,22 +232,13 @@ class _DragState extends State<Drag> {
             item = i;
           }
         }
-        print("length = ${boardCardList.length}");
-        print("index = ${index}");
         if (compareYear(index, item)) {
-          print("YES");
           setState(() {
-            boardCardList.insert(index + 1, item);
-            handCardList.remove(item);
+            boardCardList.insert(index + 1,item);
+            handCardList.removeWhere((item) => item.name == value);
+            indexOfLastCard = index + 1;
           });
-          // setState(() {
-          //   boardCardList.insert(index + 1, value);
-          //   handCardList.remove(value);
-          // });
-        } else {
-          print("No");
-        }
-        print("Value = $value");
+        } else {}
       },
     );
   }
