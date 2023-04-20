@@ -9,8 +9,7 @@ void main() {
 
 class MyApp extends StatelessWidget {
   @override
-  Widget build(BuildContext context) =>
-      MaterialApp(
+  Widget build(BuildContext context) => MaterialApp(
         home: Drag(),
       );
 }
@@ -24,13 +23,18 @@ class _DragState extends State<Drag> {
   int randomIndex = Random().nextInt(cardListOnHand.length);
 
   // List<GameCard> boardCardList = List.empty();
-  List handCardList = cardListOnHand;
+  List handCardList = [];
   List boardCardList = [];
 
   @override
   void initState() {
-boardCardList.add(handCardList[randomIndex]);
-handCardList.removeAt(randomIndex);
+    handCardList.addAll(cardListOnHand);
+    boardCardList.add(handCardList[randomIndex]);
+    handCardList.removeAt(randomIndex);
+    handCardList.shuffle(Random());
+    boardCardList.insert(0, GameCard(name: "", id: -1, year: 0));
+    boardCardList.insert(
+        boardCardList.length, GameCard(name: "", id: -1, year: 0));
     super.initState();
   }
 
@@ -44,22 +48,34 @@ handCardList.removeAt(randomIndex);
             Text("Игровой стол"),
             SizedBox(
               height: 150,
-              child: Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 10),
+                child: Expanded(
+                    child: Center(
                   child: ListView.separated(
+                    shrinkWrap: true,
                     itemBuilder: listBoardCard,
                     separatorBuilder: _buildDragTargetsBoard,
                     itemCount: boardCardList.length,
                     scrollDirection: Axis.horizontal,
-                  )),
+                  ),
+                )),
+              ),
             ),
 //            list view separated will build a widget between 2 list items to act as a separator
             Text("Рука игрока"),
             Expanded(
                 child: ListView.builder(
-                  itemBuilder: _buildListHandCard,
-                  // separatorBuilder: _buildDragTargetsA,
-                  itemCount: handCardList.length,
-                )),
+              itemBuilder: _buildListHandCard,
+              // separatorBuilder: _buildDragTargetsA,
+              itemCount: handCardList.length,
+            )),
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (context) => MyApp()));
+                },
+                child: Text("Заново"))
           ],
         ),
       ),
@@ -71,30 +87,33 @@ handCardList.removeAt(randomIndex);
 
     return boardCardList[index].id == -1
         ? Container(
-      // color: Colors.orangeAccent,
-      // width: 50,
-      // height: 50,
-    )
+            // color: Colors.orangeAccent,
+            // width: 50,
+            // height: 50,
+            )
         : Card(
-      child: SizedBox(
-        width: 100,
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                boardCard.name,
-                style: TextStyle(fontSize: 10),
+            child: SizedBox(
+              width: 100,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      boardCard.name,
+                      style: TextStyle(fontSize: 10),
+                      textAlign: TextAlign.center,
+
+                    ),
+                  ),
+                  Text(
+                    boardCard.year.toString(),
+                    style: TextStyle(fontSize: 8),
+                    textAlign: TextAlign.center,
+                  )
+                ],
               ),
             ),
-            Text(
-              boardCard.year.toString(),
-              style: TextStyle(fontSize: 8),
-            )
-          ],
-        ),
-      ),
-    );
+          );
   }
 
 //  builds the widgets for List A items
@@ -139,32 +158,30 @@ handCardList.removeAt(randomIndex);
         ),
       ),
       onDragStarted: () {
-        final snackBar = SnackBar(
-          content: Text(
-            'Выбрана карта ${handCard.name}',
-          ),
-        );
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-
+        setState(() {});
+      },
+      onDragCompleted: () {
         setState(() {
+          boardCardList.removeWhere((item) => item.id == -1);
           boardCardList.insert(0, GameCard(name: "", id: -1, year: 0));
           boardCardList.insert(
               boardCardList.length, GameCard(name: "", id: -1, year: 0));
         });
       },
-      onDragCompleted: () {
-        setState(() {
-          boardCardList.removeWhere((item) => item.id == -1);
-        });
-      },
       onDraggableCanceled: (Velocity velocity, Offset offset) {
         setState(() {
           boardCardList.removeWhere((item) => item.id == -1);
+          boardCardList.insert(0, GameCard(name: "", id: -1, year: 0));
+          boardCardList.insert(
+              boardCardList.length, GameCard(name: "", id: -1, year: 0));
         });
       },
       onDragEnd: (DraggableDetails details) {
         setState(() {
           boardCardList.removeWhere((item) => item.id == -1);
+          boardCardList.insert(0, GameCard(name: "", id: -1, year: 0));
+          boardCardList.insert(
+              boardCardList.length, GameCard(name: "", id: -1, year: 0));
         });
       },
     );
@@ -227,9 +244,7 @@ handCardList.removeAt(randomIndex);
     print("length = ${boardCardList.length}");
     print("index = ${indexBoardCard}");
 
-
-
-    if (indexBoardCard > 0 && indexBoardCard < boardCardList.length-2) {
+    if (indexBoardCard > 0 && indexBoardCard < boardCardList.length - 2) {
       print("first IF");
       isTruePosition = cardFromHand.year > prevBoardCard.year &&
           cardFromHand.year < nextBoardCard.year;
@@ -237,7 +252,7 @@ handCardList.removeAt(randomIndex);
       print("Second IF");
 
       isTruePosition = cardFromHand.year < nextBoardCard.year;
-    } else if (indexBoardCard == boardCardList.length-2) {
+    } else if (indexBoardCard == boardCardList.length - 2) {
       print("Third IF");
 
       isTruePosition = cardFromHand.year > prevBoardCard.year;
@@ -254,15 +269,13 @@ handCardList.removeAt(randomIndex);
         return candidates.isNotEmpty
             ? _buildDropPreview(context, candidates[0]!)
             : const SizedBox(
-          width: 5,
-          height: 5,
-        );
+                width: 5,
+                height: 5,
+              );
       },
       onWillAccept: (value) => !boardCardList.contains(value),
       onAccept: (value) {
-
         GameCard item = boardCardList[0];
-
 
         for (var i in handCardList) {
           if (value == i.name) {
