@@ -26,6 +26,10 @@ class _DragState extends State<Drag> {
   List handCardList = [];
   List boardCardList = [];
   int indexOfLastCard = -1;
+  bool isCardClicked = false;
+  int indexOfClickedCard = -1;
+  late AnimationController _controller;
+  late Animation _myAnimation;
 
   @override
   void initState() {
@@ -37,48 +41,69 @@ class _DragState extends State<Drag> {
     boardCardList.insert(
         boardCardList.length, GameCard(name: "", id: -1, year: 0));
     super.initState();
+    _controller = AnimationController(
+      duration: Duration(milliseconds: 1200), vsync: Drag,
+
+    );
+    _myAnimation = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.greenAccent[200],
-      body: SafeArea(
-        child: Column(
-          children: [
-            Text("Игровой стол"),
-            SizedBox(
-              height: 150,
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 5.0, horizontal: 10),
-                child: Expanded(
-                    child: Center(
-                  child: ListView.separated(
-                    shrinkWrap: true,
-                    itemBuilder: listBoardCard,
-                    separatorBuilder: _buildDragTargetsBoard,
-                    itemCount: boardCardList.length,
-                    scrollDirection: Axis.horizontal,
+      body: GestureDetector(
+        onTap: () {
+          setState(() {
+            isCardClicked = false;
+          });
+        },
+        child: SafeArea(
+          child: Stack(children: [
+            Column(
+              children: [
+                Text("Игровой стол"),
+                SizedBox(
+                  height: 150,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 5.0, horizontal: 10),
+                    child: Expanded(
+                        child: Center(
+                      child: ListView.separated(
+                        shrinkWrap: true,
+                        itemBuilder: listBoardCard,
+                        separatorBuilder: _buildDragTargetsBoard,
+                        itemCount: boardCardList.length,
+                        scrollDirection: Axis.horizontal,
+                      ),
+                    )),
                   ),
-                )),
-              ),
-            ),
+                ),
 //            list view separated will build a widget between 2 list items to act as a separator
-            Text("Рука игрока"),
-            Expanded(
-                child: ListView.builder(
-              itemBuilder: _buildListHandCard,
-              // separatorBuilder: _buildDragTargetsA,
-              itemCount: handCardList.length,
-            )),
-            ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context)
-                      .push(MaterialPageRoute(builder: (context) => MyApp()));
-                },
-                child: Text("Заново"))
-          ],
+                Text("Рука игрока"),
+                Expanded(
+                    child: ListView.builder(
+                  itemBuilder: _buildListHandCard,
+                  // separatorBuilder: _buildDragTargetsA,
+                  itemCount: handCardList.length,
+                )),
+                ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => MyApp()));
+                    },
+                    child: Text("Заново"))
+              ],
+            ),
+            if (isCardClicked)
+              AnimatedOpacity(
+                duration: Duration(milliseconds: 2000),
+                opacity: 1,
+                curve: Curves.easeInOutSine,
+                child: openCard(context, indexOfClickedCard),
+              ),
+          ]),
         ),
       ),
     );
@@ -89,31 +114,56 @@ class _DragState extends State<Drag> {
 
     return boardCardList[index].id == -1
         ? Container()
-        : Card(
-            color: indexOfLastCard == index
-                ? Colors.lightGreenAccent
-                : Colors.white,
-            child: SizedBox(
-              width: 100,
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      boardCard.name,
-                      style: TextStyle(fontSize: 10),
-                      textAlign: TextAlign.center,
+        : GestureDetector(
+            onTap: () {
+              setState(() {
+                isCardClicked = true;
+                indexOfClickedCard = index;
+              });
+            },
+            child: Card(
+              color: indexOfLastCard == index
+                  ? Colors.lightGreenAccent
+                  : Colors.white,
+              child: SizedBox(
+                width: 100,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        boardCard.name,
+                        style: TextStyle(fontSize: 10),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
-                  ),
-                  Text(
-                    boardCard.year.toString(),
-                    style: TextStyle(fontSize: 8),
-                    textAlign: TextAlign.center,
-                  )
-                ],
+                    Text(
+                      boardCard.year.toString(),
+                      style: TextStyle(fontSize: 8),
+                      textAlign: TextAlign.center,
+                    )
+                  ],
+                ),
               ),
             ),
           );
+  }
+
+  Widget openCard(BuildContext context, int index) {
+    GameCard openCard = boardCardList[index];
+    return Padding(
+      key: Key("loading"),
+      padding: const EdgeInsets.all(50.0),
+      child: Center(
+        child: Card(
+          color: Colors.lightBlue,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [Text(openCard.name)],
+          ),
+        ),
+      ),
+    );
   }
 
 //  builds the widgets for List A items
@@ -234,7 +284,7 @@ class _DragState extends State<Drag> {
         }
         if (compareYear(index, item)) {
           setState(() {
-            boardCardList.insert(index + 1,item);
+            boardCardList.insert(index + 1, item);
             handCardList.removeWhere((item) => item.name == value);
             indexOfLastCard = index + 1;
           });
