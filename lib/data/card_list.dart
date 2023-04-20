@@ -1,7 +1,19 @@
+import 'package:timeline/data/enums.dart';
 import 'package:timeline/model/game_card.dart';
 
 List<GameCard> cardListOnHand = [
-  GameCard(id: 4, name: "Паровой двигатель", year: 1698),
+  GameCard(
+      name: "Паровой двигатель",
+      year: 1698,
+      date: DateTime(1698, 07, 02),
+      description:
+          "2 июля 1698 года — английский механик Томас Севери патентует первый паровой двигатель. Сама по себе «машина Севери» представляла собой обычный паровой насос без деталей, приводимых в движение. Однако эта разработка позволила последователям Севери внедрить в механические устройства реальные паровые двигатели."
+          " Первый прототип паровоза был сконструирован во Франции военным инженером Николя-Жозе Кюньо уже в 1769 году. Железнодорожные составы, первые автомобили, корабли, станки на заводах и фабриках, моторизированная сельхозтехника — все это работало на пару. Именно разработка парового двигателя дала старт промышленной революции XVIII—XIX веков.",
+      source: "https://www.gutenberg.org/files/46879/46879-h/46879-h.htm",
+      author: "Томас Севери",
+      category: Category.inventions,
+      geography: Geography.allWorld,
+      century: Century.earlier),
   GameCard(id: 4, name: "Рождение фотографии", year: 1839),
   GameCard(id: 4, name: "Патент на телефон", year: 1876),
   GameCard(id: 4, name: "Лампа накаливания", year: 1879),
@@ -18,10 +30,4 @@ List<GameCard> cardListOnHand = [
   GameCard(id: 4, name: "Сотовый телефон", year: 1973),
   GameCard(id: 4, name: "3D принтер", year: 1983),
   GameCard(id: 4, name: "Интернет", year: 1991),
-
-
-];
-
-List<GameCard> cardListOnBoard = [
-
 ];
