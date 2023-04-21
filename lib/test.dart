@@ -28,8 +28,6 @@ class _DragState extends State<Drag> {
   int indexOfLastCard = -1;
   bool isCardClicked = false;
   int indexOfClickedCard = -1;
-  late AnimationController _controller;
-  late Animation _myAnimation;
 
   @override
   void initState() {
@@ -41,11 +39,6 @@ class _DragState extends State<Drag> {
     boardCardList.insert(
         boardCardList.length, GameCard(name: "", id: -1, year: 0));
     super.initState();
-    _controller = AnimationController(
-      duration: Duration(milliseconds: 1200), vsync: Drag,
-
-    );
-    _myAnimation = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
   }
 
   @override
@@ -96,13 +89,7 @@ class _DragState extends State<Drag> {
                     child: Text("Заново"))
               ],
             ),
-            if (isCardClicked)
-              AnimatedOpacity(
-                duration: Duration(milliseconds: 2000),
-                opacity: 1,
-                curve: Curves.easeInOutSine,
-                child: openCard(context, indexOfClickedCard),
-              ),
+            if (isCardClicked)                 openCard(context, indexOfClickedCard),
           ]),
         ),
       ),
