@@ -224,12 +224,12 @@ class _DragState extends State<Drag> {
     GameCard nextBoardCard = boardCardList[indexBoardCard + 1];
 
     if (indexBoardCard > 0 && indexBoardCard < boardCardList.length - 2) {
-      isTruePosition = cardFromHand.year > prevBoardCard.year &&
-          cardFromHand.year < nextBoardCard.year;
+      isTruePosition = cardFromHand.year >= prevBoardCard.year &&
+          cardFromHand.year <= nextBoardCard.year;
     } else if (indexBoardCard == 0) {
-      isTruePosition = cardFromHand.year < nextBoardCard.year;
+      isTruePosition = cardFromHand.year <= nextBoardCard.year;
     } else if (indexBoardCard == boardCardList.length - 2) {
-      isTruePosition = cardFromHand.year > prevBoardCard.year;
+      isTruePosition = cardFromHand.year >= prevBoardCard.year;
     } else {
       false;
     }
