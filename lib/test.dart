@@ -3,6 +3,8 @@ import 'package:timeline/data/card_list.dart';
 import 'package:timeline/model/game_card.dart';
 import 'dart:math';
 
+import 'package:timeline/ui/card_screen.dart';
+
 void main() {
   runApp(MyApp());
 }
@@ -23,8 +25,8 @@ class _DragState extends State<Drag> {
   int randomIndex = Random().nextInt(cardListOnHand.length);
 
   // List<GameCard> boardCardList = List.empty();
-  List handCardList = [];
-  List boardCardList = [];
+  List<GameCard> handCardList = [];
+  List<GameCard> boardCardList = [];
   int indexOfLastCard = -1;
   bool isCardClicked = false;
   int indexOfClickedCard = -1;
@@ -89,7 +91,8 @@ class _DragState extends State<Drag> {
                     child: Text("Заново"))
               ],
             ),
-            if (isCardClicked)                 openCard(context, indexOfClickedCard),
+            if (isCardClicked)
+              openCard(context, indexOfClickedCard, boardCardList),
           ]),
         ),
       ),
@@ -134,23 +137,6 @@ class _DragState extends State<Drag> {
               ),
             ),
           );
-  }
-
-  Widget openCard(BuildContext context, int index) {
-    GameCard openCard = boardCardList[index];
-    return Padding(
-      key: Key("loading"),
-      padding: const EdgeInsets.all(50.0),
-      child: Center(
-        child: Card(
-          color: Colors.lightBlue,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [Text(openCard.name)],
-          ),
-        ),
-      ),
-    );
   }
 
 //  builds the widgets for List A items
@@ -238,12 +224,12 @@ class _DragState extends State<Drag> {
     GameCard nextBoardCard = boardCardList[indexBoardCard + 1];
 
     if (indexBoardCard > 0 && indexBoardCard < boardCardList.length - 2) {
-      isTruePosition = cardFromHand.year > prevBoardCard.year &&
-          cardFromHand.year < nextBoardCard.year;
+      isTruePosition = cardFromHand.year >= prevBoardCard.year &&
+          cardFromHand.year <= nextBoardCard.year;
     } else if (indexBoardCard == 0) {
-      isTruePosition = cardFromHand.year < nextBoardCard.year;
+      isTruePosition = cardFromHand.year <= nextBoardCard.year;
     } else if (indexBoardCard == boardCardList.length - 2) {
-      isTruePosition = cardFromHand.year > prevBoardCard.year;
+      isTruePosition = cardFromHand.year >= prevBoardCard.year;
     } else {
       false;
     }
