@@ -1,22 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:timeline/model/game_card.dart';
 
-class CardScreen extends StatelessWidget {
-  final GameCard gameCard;
-
-  const CardScreen({super.key, required this.gameCard});
-
-  @override
-  Widget build(BuildContext context) => Scaffold(
-        backgroundColor: Colors.amber[200],
-        body: Center(
+Widget openCard(BuildContext context, int index, List<GameCard> boardCardList) {
+  GameCard openCard = boardCardList[index];
+  return Padding(
+    key: Key("loading"),
+    padding: const EdgeInsets.all(50.0),
+    child: Center(
+      child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30.0),
+        ),
+        color: Colors.lightBlue,
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(gameCard.name),
-              // Image(image: AssetImage("assets/no_image.jpg")),
-              Text(gameCard.year.toString())
+              Text(openCard.name,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+              Text(openCard.year.toString(),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             ],
           ),
         ),
-      );
+      ),
+    ),
+  );
 }
