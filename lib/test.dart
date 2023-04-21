@@ -4,6 +4,7 @@ import 'package:timeline/model/game_card.dart';
 import 'dart:math';
 
 import 'package:timeline/ui/card_screen.dart';
+import 'package:timeline/ui/settings_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -88,14 +89,23 @@ class _DragState extends State<Drag> {
                       Navigator.of(context).push(
                           MaterialPageRoute(builder: (context) => MyApp()));
                     },
-                    child: Text("Заново"))
+                    child: Text("Заново")),
+
               ],
             ),
+
             if (isCardClicked)
               openCard(context, indexOfClickedCard, boardCardList),
           ]),
         ),
       ),
+      floatingActionButton: FloatingActionButton(onPressed: (){
+        Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => SettingScreen()));
+      },
+        child: Icon(Icons.settings),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 
