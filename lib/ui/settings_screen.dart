@@ -5,8 +5,9 @@ import 'package:timeline/ui/widgets/drop_down.dart';
 import '../data/enums.dart';
 
 List<String> levels2 = Level.values.map((e) => e.name).toList();
-Map<String, bool> category =
-    Category.values.map((e) => e.name).toList().asMap().cast<String, bool>();
+
+
+Map<String, bool> category2 = {"a": false, "bn": true};
 
 class SettingScreen extends StatefulWidget {
   @override
@@ -14,26 +15,34 @@ class SettingScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingScreen> {
+  List<String> categoryList = Category.values.map((e) => e.name).toList();
+
   String dropdownValue = levels2.first;
+  Map<String, bool> category = {};
 
   // late  Function(String newValue) callSetState;
 
-  callback(var newValue) {
-    if (newValue is String) {
+  callback(String stringValue, bool boolValue, String settingsType) {
+    if (settingsType == SettingsType.dropDown) {
       setState(() {
-        dropdownValue = newValue;
+        dropdownValue = stringValue;
       });
-      print("newValue = $newValue");
-    } else if (newValue is Map<String, bool>) {
-      // setState(() {
-      //   category[newValue] = newValue;
-      // });
+      print("newValue = $stringValue");
+    } else if (settingsType == SettingsType.checkBox) {
+      setState(() {
+        category[stringValue] = boolValue;
+      });
     }
   }
 
   @override
   void initState() {
-    super.initState();
+
+    for (var item in categoryList) {
+      category[item] = false;
+      print("item = $item");
+    }
+      super.initState();
   }
 
   @override
@@ -52,8 +61,15 @@ class _SettingsScreenState extends State<SettingScreen> {
           "Выберите категорию игры",
           style: TextStyle(fontSize: 20),
         ),
-        // checkBox(context, category, callback),
+        Container(
+            color: Colors.red,
+            child: Material(
+              child:             checkBox(context, category, callback)),
+
+            )
       ]),
     );
   }
 }
+
+enum SettingsType { dropDown, checkBox }
