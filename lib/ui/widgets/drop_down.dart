@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 
-import '../settings_screen.dart';
-
-Widget dropDown(BuildContext context, String dropDownValue, List<String> values,
-    void Function(String newValue, bool boolValue, String settingsType) callSetState) {
+Widget dropDown(
+    BuildContext context,
+    String dropDownValue,
+    List<String> values,
+    void Function(String newValue, bool boolValue, String settingsType)
+        callSetState) {
   return DropdownButton<String>(
     value: dropDownValue,
     onChanged: (String? newValue) {
-      callSetState(newValue!, false, SettingsType.dropDown as String);
+      callSetState(newValue!, false, "dropDown");
       // setState(() {
       //   dropDownValue = newValue!;
       // });

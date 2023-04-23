@@ -46,3 +46,12 @@ enum Geography {
 
   const Geography(this.name);
 }
+
+enum SettingsType {
+  dropDown("dropDown"),
+  checkBox("checkBox");
+
+  final String name;
+
+  const SettingsType(this.name);
+}

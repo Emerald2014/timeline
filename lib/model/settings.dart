@@ -1,7 +1,7 @@
 import '../data/enums.dart';
 
 class Settings {
-  final List<String> category;
+  final List<Category> category;
   late final Geography geography;
   late final Level level;
   final List<String> century;
