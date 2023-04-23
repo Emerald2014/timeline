@@ -24,9 +24,9 @@ class GameCard {
       this.description = "",
       this.source = "",
       this.author = "",
-      this.category = Category.allCategory,
+      required this.category,
       this.geography = Geography.allWorld,
       this.level = Level.hard,
-      this.century = Century.allTime,
+      required this.century,
       this.id = 0});
 }

@@ -1,10 +1,12 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:timeline/data/card_list.dart';
 import 'package:timeline/model/game_card.dart';
-import 'dart:math';
-
-import 'package:timeline/ui/card_screen.dart';
 import 'package:timeline/ui/settings_screen.dart';
+import 'package:timeline/ui/widgets/card_screen.dart';
+
+import 'data/enums.dart';
 
 void main() {
   runApp(MyApp());
@@ -38,9 +40,22 @@ class _DragState extends State<Drag> {
     boardCardList.add(handCardList[randomIndex]);
     handCardList.removeAt(randomIndex);
     handCardList.shuffle(Random());
-    boardCardList.insert(0, GameCard(name: "", id: -1, year: 0));
     boardCardList.insert(
-        boardCardList.length, GameCard(name: "", id: -1, year: 0));
+        0,
+        GameCard(
+            name: "",
+            id: -1,
+            year: 0,
+            category: Category.inventions,
+            century: Century.earlier));
+    boardCardList.insert(
+        boardCardList.length,
+        GameCard(
+            name: "",
+            id: -1,
+            year: 0,
+            category: Category.inventions,
+            century: Century.earlier));
     super.initState();
   }
 
@@ -90,19 +105,18 @@ class _DragState extends State<Drag> {
                           MaterialPageRoute(builder: (context) => MyApp()));
                     },
                     child: Text("Заново")),
-
               ],
             ),
-
             if (isCardClicked)
               openCard(context, indexOfClickedCard, boardCardList),
           ]),
         ),
       ),
-      floatingActionButton: FloatingActionButton(onPressed: (){
-        Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => SettingScreen()));
-      },
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (context) => SettingScreen()));
+        },
         child: Icon(Icons.settings),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
@@ -207,9 +221,22 @@ class _DragState extends State<Drag> {
 
   void removeAndAddCard() {
     boardCardList.removeWhere((item) => item.id == -1);
-    boardCardList.insert(0, GameCard(name: "", id: -1, year: 0));
     boardCardList.insert(
-        boardCardList.length, GameCard(name: "", id: -1, year: 0));
+        0,
+        GameCard(
+            name: "",
+            id: -1,
+            year: 0,
+            category: Category.inventions,
+            century: Century.earlier));
+    boardCardList.insert(
+        boardCardList.length,
+        GameCard(
+            name: "",
+            id: -1,
+            year: 0,
+            category: Category.inventions,
+            century: Century.earlier));
   }
 
   Widget _buildDropPreview(BuildContext context, String value) {

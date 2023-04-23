@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:timeline/model/settings.dart';
+import 'package:timeline/ui/widgets/drop_down.dart';
 
 import '../data/enums.dart';
-const List<String> levels = <String>['One', 'Two', 'Three', 'Four'];
 List<String> levels2 = Level.values.map((e) => e.name).toList();
 
 
@@ -12,11 +11,16 @@ class SettingScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingScreen> {
-  late ClassType classType;
-  // List<String> levels2 = Level.values.cast<String>().toList();
-
-  // late String dropdownValue;
   String dropdownValue = levels2.first;
+
+  // late  Function(String newValue) callSetState;
+
+  callback(String newValue) {
+     setState(() {
+      dropdownValue = newValue;
+    });
+     print("newValue = $newValue");
+  }
 
   @override
   void initState() {
@@ -35,23 +39,9 @@ class _SettingsScreenState extends State<SettingScreen> {
           "Выберите сложность игры",
           style: TextStyle(fontSize: 20),
         ),
-        DropdownButton<String>(
-          value: dropdownValue,
-          onChanged: (String? newLevel) {
-            setState(() {
-              dropdownValue = newLevel!;
-            });
-          },
-          items: levels2.map<DropdownMenuItem<String>>((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
-            );
-          }).toList(),
-        ),
+
+       dropDown(context, dropdownValue, levels2, callback )
       ]),
     );
   }
 }
-
-enum ClassType { A, B, C, D }

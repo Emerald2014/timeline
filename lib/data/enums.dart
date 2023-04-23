@@ -1,15 +1,48 @@
 enum Level {
-  easy, normal, hard
+  easy("Легкий"),
+  normal("Нормальный"),
+  hard("Тяжелый");
+
+  final String name;
+
+  const Level(this.name);
 }
 
 enum Category {
-  brands, opens, events, inventions, allCategory
+  brands("Бренды"),
+  opens("Открытия"),
+  events("События"),
+  inventions("Изобретения"),
+  buildings("Постройки"),
+  wars("Войны и конфликты");
+
+  final String name;
+
+  const Category(this.name);
 }
 
 enum Century {
-  XX, XIX, XXI, earlier, allTime
+  XXI("XXI"),
+  XX("XX"),
+  XIX("XIX"),
+  XVIII("XVIII"),
+  XVII("XVII"),
+  XVI("XVI"),
+  XV("XV"),
+  XIV("XIV"),
+  earlier("Ранее");
+
+  final String name;
+
+  const Century(this.name);
 }
 
 enum Geography {
-  RF, SNG, allWorld
+  RF("РФ"),
+  SNG("СНГ"),
+  allWorld("Весь мир");
+
+  final String name;
+
+  const Geography(this.name);
 }

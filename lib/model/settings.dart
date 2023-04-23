@@ -1,15 +1,15 @@
 import '../data/enums.dart';
 
 class Settings {
-  late final Category category;
+  final List<String> category;
   late final Geography geography;
   late final Level level;
-  late final Century century;
+  final List<String> century;
 
   Settings({
-    this.category = Category.allCategory,
+    required this.category,
     this.geography = Geography.allWorld,
     this.level = Level.hard,
-    this.century = Century.allTime,
+    required this.century,
   });
 }
