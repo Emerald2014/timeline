@@ -312,7 +312,12 @@ class _GameScreenState extends State<GameScreen> {
             handCardList.removeWhere((item) => item.name == value);
             indexOfLastCard = index + 1;
           });
-        } else {}
+        } else {
+          setState(() {
+            handCardList.add(deckOfCard[0]);
+            deckOfCard.removeAt(0);
+          });
+        }
       },
     );
   }
