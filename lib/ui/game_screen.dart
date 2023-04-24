@@ -6,6 +6,7 @@ import 'package:timeline/data/enums.dart';
 import 'package:timeline/model/game_card.dart';
 import 'package:timeline/ui/settings_screen.dart';
 import 'package:timeline/ui/widgets/card_screen.dart';
+import 'package:timeline/ui/widgets/deck_of_cards.dart';
 
 class GameScreen extends StatefulWidget {
   final List<GameCard> gameCardList;
@@ -26,6 +27,7 @@ class _GameScreenState extends State<GameScreen> {
 
   // List<GameCard> boardCardList = List.empty();
   List<GameCard> handCardList = [];
+  List<GameCard> deckOfCard = [];
   List<GameCard> boardCardList = [];
   int indexOfLastCard = -1;
   bool isCardClicked = false;
@@ -33,16 +35,20 @@ class _GameScreenState extends State<GameScreen> {
 
   @override
   void initState() {
-    handCardList.clear();
+    deckOfCard.clear();
     if (gameCardList.isEmpty) {
-      handCardList.addAll(cardListOnHand);
+      deckOfCard.addAll(cardListOnHand);
     } else {
-      handCardList.addAll(gameCardList);
+      deckOfCard.addAll(gameCardList);
     }
-    randomIndex = Random().nextInt(handCardList.length);
-    boardCardList.add(handCardList[randomIndex]);
-    handCardList.removeAt(randomIndex);
-    handCardList.shuffle(Random());
+    randomIndex = Random().nextInt(deckOfCard.length);
+    boardCardList.add(deckOfCard[randomIndex]);
+    deckOfCard.removeAt(randomIndex);
+    deckOfCard.shuffle(Random());
+    for (var i = 0; i < 5; i++) {
+      handCardList.add(deckOfCard[i]);
+      deckOfCard.removeAt(i);
+    }
     boardCardList.insert(
         0,
         GameCard(
@@ -98,10 +104,10 @@ class _GameScreenState extends State<GameScreen> {
                 Text("Рука игрока"),
                 Expanded(
                     child: ListView.builder(
-                      itemBuilder: _buildListHandCard,
-                      // separatorBuilder: _buildDragTargetsA,
-                      itemCount: handCardList.length,
-                    )),
+                  itemBuilder: _buildListHandCard,
+                  // separatorBuilder: _buildDragTargetsA,
+                  itemCount: handCardList.length,
+                )),
                 ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(
@@ -111,6 +117,7 @@ class _GameScreenState extends State<GameScreen> {
                     child: Text("Заново")),
               ],
             ),
+            deckOfCards(context, deckOfCard.length),
             if (isCardClicked)
               openCard(context, indexOfClickedCard, boardCardList),
           ]),
@@ -191,7 +198,7 @@ class _GameScreenState extends State<GameScreen> {
         height: 40,
       ),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(0,0,50,0),
+        padding: const EdgeInsets.fromLTRB(0, 0, 120, 0),
         child: Card(
           child: SizedBox(
             width: 100,
@@ -199,7 +206,7 @@ class _GameScreenState extends State<GameScreen> {
               padding: const EdgeInsets.all(8.0),
               child: Text(
                 handCard.name,
-                style: TextStyle(fontSize: 10),
+                style: TextStyle(fontSize: 12),
               ),
             ),
           ),
