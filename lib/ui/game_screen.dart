@@ -31,6 +31,8 @@ class _GameScreenState extends State<GameScreen> {
   int indexOfLastCard = -1;
   bool isCardClicked = false;
   int indexOfClickedCard = -1;
+  bool isVisibleCardPreview = false;
+  int indexOfClickedCardForHelp = -1;
 
   @override
   void initState() {
@@ -114,6 +116,14 @@ class _GameScreenState extends State<GameScreen> {
                               const GameScreen(gameCardList: [])));
                     },
                     child: Text("Заново")),
+                Align(
+                    alignment: Alignment.bottomLeft,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        isVisibleCardPreview = true;
+                      },
+                      child: Text("Подсказка"),
+                    )),
               ],
             ),
             deckOfCards(context, deckOfCard.length, callback),
@@ -198,14 +208,36 @@ class _GameScreenState extends State<GameScreen> {
       ),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(0, 0, 120, 0),
-        child: Card(
-          child: SizedBox(
-            width: 100,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                handCard.name,
-                style: TextStyle(fontSize: 12),
+        child: GestureDetector(
+          onTap: () {
+            if (isVisibleCardPreview) {
+              setState(() {
+                isVisibleCardPreview = false;
+                indexOfClickedCardForHelp = index;
+              });
+            } else {
+              print("Tap on card $index");
+            }
+          },
+          child: Card(
+            child: SizedBox(
+              width: 100,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      handCard.name,
+                      style: TextStyle(fontSize: 12),
+                    ),
+                    Visibility(
+                        child: Text(
+                          handCard.year.toString(),
+                        ),
+                        visible: checkVisibility(index))
+                  ],
+                ),
               ),
             ),
           ),
@@ -230,6 +262,10 @@ class _GameScreenState extends State<GameScreen> {
         });
       },
     );
+  }
+
+  bool checkVisibility(int index) {
+    return (indexOfClickedCardForHelp == index);
   }
 
   void removeAndAddCard() {
