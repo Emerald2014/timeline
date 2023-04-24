@@ -183,7 +183,8 @@ class _GameScreenState extends State<GameScreen> {
                         boardCard.year.toString(),
                         style: TextStyle(fontSize: 10),
                         textAlign: TextAlign.center,
-                      )
+                      ),
+                      Image.asset(boardCard.image, height: 70,)
                     ],
                   ),
                 ),
