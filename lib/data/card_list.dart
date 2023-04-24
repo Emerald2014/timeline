@@ -13,6 +13,7 @@ List<GameCard> cardListOnHand = [
       author: "Томас Севери",
       category: Category.inventions,
       geography: Geography.allWorld,
+      image: "assets/steam-engine-1698-granger.jpg",
       century: Century.XVII),
   GameCard(id: 4, name: "Рождение фотографии", year: 1839, category: Category.opens, century: Century.earlier),
   GameCard(id: 4, name: "Патент на телефон", year: 1876, category: Category.inventions, century: Century.XIV),
