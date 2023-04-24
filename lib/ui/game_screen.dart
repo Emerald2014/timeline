@@ -20,12 +20,11 @@ class GameScreen extends StatefulWidget {
 
 class _GameScreenState extends State<GameScreen> {
   final List<GameCard> gameCardList;
+  final VoidCallback myVoidCallback = () {};
 
   _GameScreenState({required this.gameCardList});
 
   int randomIndex = 0;
-
-  // List<GameCard> boardCardList = List.empty();
   List<GameCard> handCardList = [];
   List<GameCard> deckOfCard = [];
   List<GameCard> boardCardList = [];
@@ -117,7 +116,7 @@ class _GameScreenState extends State<GameScreen> {
                     child: Text("Заново")),
               ],
             ),
-            deckOfCards(context, deckOfCard.length),
+            deckOfCards(context, deckOfCard.length, callback),
             if (isCardClicked)
               openCard(context, indexOfClickedCard, boardCardList),
           ]),
@@ -320,5 +319,12 @@ class _GameScreenState extends State<GameScreen> {
         }
       },
     );
+  }
+
+  callback() {
+    setState(() {
+      handCardList.add(deckOfCard[0]);
+      deckOfCard.removeAt(0);
+    });
   }
 }
