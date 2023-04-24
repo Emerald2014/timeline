@@ -9,6 +9,7 @@ enum Level {
 }
 
 enum Category {
+  all("Все категории"),
   brands("Бренды"),
   opens("Открытия"),
   events("События"),

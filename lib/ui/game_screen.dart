@@ -98,10 +98,10 @@ class _GameScreenState extends State<GameScreen> {
                 Text("Рука игрока"),
                 Expanded(
                     child: ListView.builder(
-                  itemBuilder: _buildListHandCard,
-                  // separatorBuilder: _buildDragTargetsA,
-                  itemCount: handCardList.length,
-                )),
+                      itemBuilder: _buildListHandCard,
+                      // separatorBuilder: _buildDragTargetsA,
+                      itemCount: handCardList.length,
+                    )),
                 ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(
@@ -151,13 +151,13 @@ class _GameScreenState extends State<GameScreen> {
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
                         boardCard.name,
-                        style: TextStyle(fontSize: 10),
+                        style: TextStyle(fontSize: 12),
                         textAlign: TextAlign.center,
                       ),
                     ),
                     Text(
                       boardCard.year.toString(),
-                      style: TextStyle(fontSize: 8),
+                      style: TextStyle(fontSize: 10),
                       textAlign: TextAlign.center,
                     )
                   ],
@@ -180,7 +180,7 @@ class _GameScreenState extends State<GameScreen> {
             padding: const EdgeInsets.all(8.0),
             child: Text(
               handCard.name,
-              style: TextStyle(fontSize: 10),
+              style: TextStyle(fontSize: 12),
             ),
           ),
         ),
@@ -190,14 +190,17 @@ class _GameScreenState extends State<GameScreen> {
         width: 40,
         height: 40,
       ),
-      child: Card(
-        child: SizedBox(
-          width: 100,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              handCard.name,
-              style: TextStyle(fontSize: 10),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(0,0,50,0),
+        child: Card(
+          child: SizedBox(
+            width: 100,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                handCard.name,
+                style: TextStyle(fontSize: 10),
+              ),
             ),
           ),
         ),
