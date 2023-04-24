@@ -3,13 +3,15 @@ description: Game Timeline
 version: 1.0.0+1
 
 environment:
-  sdk: '>=2.19.6 <3.0.0'
+  sdk: '>=2.19.5 <3.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
   drag_and_drop_lists: ^0.3.1
+  sqflite: any
+  path_provider: any
 
 dev_dependencies:
   flutter_test:
