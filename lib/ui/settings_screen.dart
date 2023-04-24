@@ -5,6 +5,7 @@ import 'package:timeline/ui/widgets/drop_down.dart';
 
 import '../data/card_list.dart';
 import '../data/enums.dart';
+import 'game_screen.dart';
 
 class SettingScreen extends StatefulWidget {
   @override
@@ -15,6 +16,7 @@ class _SettingsScreenState extends State<SettingScreen> {
   List<String> categoryList = Category.values.map((e) => e.name).toList();
   List<String> centuryList = Century.values.map((e) => e.name).toList();
   List<String> levels = Level.values.map((e) => e.name).toList();
+  List<GameCard> changedGameCardList = [];
 
   Map<String, bool> categoryMap = {};
   Map<String, bool> centuryMap = {};
@@ -78,6 +80,7 @@ class _SettingsScreenState extends State<SettingScreen> {
         for (var changedCentury in settings.century) {
           if (item.category == changedCategory &&
               item.century == changedCentury) {
+            changedGameCardList.add(item);
             count++;
           }
         }
@@ -151,7 +154,20 @@ class _SettingsScreenState extends State<SettingScreen> {
           ),
         ),
         ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              if (changedGameCardList.length > 2) {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) =>
+                        GameScreen(gameCardList: changedGameCardList)));
+              } else {
+                final snackBar = SnackBar(
+                  content: Text(
+                    'Для игры необходимо не менее 3-х карт',
+                  ),
+                );
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              }
+            },
             child: Text("Карт в игре: ${cardsCount.toString()}"))
       ]),
     );
