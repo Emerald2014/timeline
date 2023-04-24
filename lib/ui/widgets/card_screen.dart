@@ -23,6 +23,45 @@ Widget openCard(BuildContext context, int index, List<GameCard> boardCardList) {
               Text(openCard.year.toString(),
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              SizedBox(
+                height: 20,
+              ),
+              Row(
+                children: [Text("Категория: "), Text(openCard.category.name)],
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Row(
+                children: [Text("Век: "), Text(openCard.century.name)],
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Row(
+                children: [Text("Автор: "), Text(openCard.author)],
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Text(openCard.description.toString(),
+                  textAlign: TextAlign.start,
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+              SizedBox(
+                height: 20,
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Row(
+                children: [
+                  Text("Источник: "),
+                  Text(openCard.source.toString(),
+                      textAlign: TextAlign.start,
+                      style:
+                          TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                ],
+              ),
             ],
           ),
         ),
