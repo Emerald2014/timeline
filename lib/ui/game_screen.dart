@@ -109,21 +109,28 @@ class _GameScreenState extends State<GameScreen> {
                   // separatorBuilder: _buildDragTargetsA,
                   itemCount: handCardList.length,
                 )),
-                ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) =>
-                              const GameScreen(gameCardList: [])));
-                    },
-                    child: Text("Заново")),
-                Align(
-                    alignment: Alignment.bottomLeft,
-                    child: ElevatedButton(
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ElevatedButton(
                       onPressed: () {
                         isVisibleCardPreview = true;
                       },
                       child: Text("Подсказка"),
-                    )),
+                    ),
+                    ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) =>
+                                  const GameScreen(gameCardList: [])));
+                        },
+                        child: Text("Заново")),
+                    Visibility(
+                      visible: false,
+                      child: ElevatedButton(onPressed: () {}, child: Text("")),
+                    ),
+                  ],
+                ),
               ],
             ),
             deckOfCards(context, deckOfCard.length, callback),
@@ -161,22 +168,24 @@ class _GameScreenState extends State<GameScreen> {
                   : Colors.white,
               child: SizedBox(
                 width: 100,
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        boardCard.name,
-                        style: TextStyle(fontSize: 12),
-                        textAlign: TextAlign.center,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          boardCard.name,
+                          style: TextStyle(fontSize: 12),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
-                    ),
-                    Text(
-                      boardCard.year.toString(),
-                      style: TextStyle(fontSize: 10),
-                      textAlign: TextAlign.center,
-                    )
-                  ],
+                      Text(
+                        boardCard.year.toString(),
+                        style: TextStyle(fontSize: 10),
+                        textAlign: TextAlign.center,
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -227,9 +236,11 @@ class _GameScreenState extends State<GameScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      handCard.name,
-                      style: TextStyle(fontSize: 12),
+                    Flexible(
+                      child: Text(
+                        handCard.name,
+                        style: TextStyle(fontSize: 12),
+                      ),
                     ),
                     Visibility(
                         child: Text(

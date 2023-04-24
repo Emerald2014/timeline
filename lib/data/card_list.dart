@@ -31,4 +31,5 @@ List<GameCard> cardListOnHand = [
   GameCard(id: 4, name: "Сотовый телефон", year: 1973, category: Category.inventions, century: Century.earlier),
   GameCard(id: 4, name: "3D принтер", year: 1983, category: Category.inventions, century: Century.earlier),
   GameCard(id: 4, name: "Интернет", year: 1991, category: Category.inventions, century: Century.earlier),
+  GameCard(id: 4, name: "Очень жутко длинное название какого-то изобретения, что даже не влезает в одну строку. Атутещеитекстпростокрайнедлинный", year: 1991, category: Category.inventions, century: Century.earlier),
 ];
