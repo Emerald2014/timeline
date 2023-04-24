@@ -14,7 +14,8 @@ enum Category {
   events("События"),
   inventions("Изобретения"),
   buildings("Постройки"),
-  wars("Войны и конфликты");
+  wars("Войны и конфликты"),
+  persons("Известные люди");
 
   final String name;
 
@@ -40,6 +41,10 @@ enum Century {
 enum Geography {
   RF("РФ"),
   SNG("СНГ"),
+  Europe("Европа"),
+  America("Америка"),
+  Africa("Африка"),
+  Asia("Азия"),
   allWorld("Весь мир");
 
   final String name;
