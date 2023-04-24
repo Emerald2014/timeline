@@ -4,7 +4,7 @@ class Settings {
   final List<Category> category;
   late final Geography geography;
   late final Level level;
-  final List<String> century;
+  final List<Century> century;
 
   Settings({
     required this.category,

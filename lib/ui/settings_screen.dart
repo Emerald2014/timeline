@@ -13,11 +13,14 @@ class SettingScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingScreen> {
   List<String> categoryList = Category.values.map((e) => e.name).toList();
+  List<String> centuryList = Century.values.map((e) => e.name).toList();
   List<String> levels = Level.values.map((e) => e.name).toList();
 
   Map<String, bool> categoryMap = {};
+  Map<String, bool> centuryMap = {};
   int cardsCount = 0;
   Set<String> changedCategory = {};
+  Set<String> changedCentury = {};
   late String dropdownValue;
 
   @override
@@ -26,7 +29,9 @@ class _SettingsScreenState extends State<SettingScreen> {
     for (var item in categoryList) {
       categoryMap[item] = false;
     }
-    // cardsCount = cardCount(settings);
+    for (var item in centuryList) {
+      centuryMap[item] = false;
+    }
     super.initState();
   }
 
@@ -44,18 +49,25 @@ class _SettingsScreenState extends State<SettingScreen> {
     }
   }
 
-  Settings settingsModify(List<String> listCategory) {
+  Settings settingsModify(List<String> listCategory, List<String> listCentury) {
     Set<Category> categorySet = {};
+    Set<Century> centurySet = {};
     for (Category categoryInCategoryEnum in Category.values) {
       for (String categoryName in listCategory) {
         if (categoryInCategoryEnum.name.contains(categoryName)) {
           categorySet.add(categoryInCategoryEnum);
         }
       }
+      for (Century centuryInCenturyEnum in Century.values) {
+        for (String centuryName in listCentury) {
+          if (centuryInCenturyEnum.name.contains(centuryName)) {
+            centurySet.add(centuryInCenturyEnum);
+          }
+        }
+      }
     }
-
-    List<String> listCentury = [Century.earlier.toString()];
-    return Settings(category: categorySet.toList(), century: listCentury);
+    return Settings(
+        category: categorySet.toList(), century: centurySet.toList());
   }
 
   int cardCount(Settings settings) {
@@ -63,8 +75,11 @@ class _SettingsScreenState extends State<SettingScreen> {
     int count = 0;
     for (var item in cardList) {
       for (var changedCategory in settings.category) {
-        if (item.category == changedCategory) {
-          count++;
+        for (var changedCentury in settings.century) {
+          if (item.category == changedCategory &&
+              item.century == changedCentury) {
+            count++;
+          }
         }
       }
     }
@@ -95,8 +110,6 @@ class _SettingsScreenState extends State<SettingScreen> {
                 value: categoryMap[key],
                 controlAffinity: ListTileControlAffinity.leading,
                 onChanged: (bool? newValue) {
-                  // callSetState(values[key] as String, newValue!,
-                  //     SettingsType.checkBox as String);
                   setState(() {
                     categoryMap[key] = newValue!;
                     if (categoryMap[key] == true) {
@@ -104,8 +117,33 @@ class _SettingsScreenState extends State<SettingScreen> {
                     } else {
                       changedCategory.remove(key);
                     }
-                    cardsCount =
-                        cardCount(settingsModify(changedCategory.toList()));
+                    cardsCount = cardCount(settingsModify(
+                        changedCategory.toList(), changedCentury.toList()));
+                  });
+                },
+              );
+            }).toList(),
+          ),
+        ),
+        Text("Выберите временной интервал карт:",
+            style: TextStyle(fontSize: 20)),
+        Expanded(
+          child: ListView(
+            children: centuryMap.keys.map((String key) {
+              return CheckboxListTile(
+                title: Text(key),
+                value: centuryMap[key],
+                controlAffinity: ListTileControlAffinity.leading,
+                onChanged: (bool? newValue) {
+                  setState(() {
+                    centuryMap[key] = newValue!;
+                    if (centuryMap[key] == true) {
+                      changedCentury.add(key);
+                    } else {
+                      changedCentury.remove(key);
+                    }
+                    cardsCount = cardCount(settingsModify(
+                        changedCategory.toList(), changedCentury.toList()));
                   });
                 },
               );
@@ -115,10 +153,6 @@ class _SettingsScreenState extends State<SettingScreen> {
         ElevatedButton(
             onPressed: () {},
             child: Text("Карт в игре: ${cardsCount.toString()}"))
-        // Container(
-        //   color: Colors.red,
-        //   child: Material(child: checkBox(context, category, callback)),
-        // )
       ]),
     );
   }
