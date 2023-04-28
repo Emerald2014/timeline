@@ -371,8 +371,13 @@ class _GameScreenState extends State<GameScreen> {
           });
         } else {
           setState(() {
-            handCardList.add(deckOfCard[0]);
-            deckOfCard.removeAt(0);
+            if (deckOfCard.isNotEmpty) {
+              handCardList.add(deckOfCard[0]);
+              deckOfCard.removeAt(0);
+            } else {
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(snackBarEmptyDeckOfCard());
+            }
           });
         }
       },
@@ -381,8 +386,26 @@ class _GameScreenState extends State<GameScreen> {
 
   callback() {
     setState(() {
-      handCardList.add(deckOfCard[0]);
-      deckOfCard.removeAt(0);
+      if (deckOfCard.isNotEmpty) {
+        handCardList.add(deckOfCard[0]);
+        deckOfCard.removeAt(0);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(snackBarEmptyDeckOfCard());
+      }
     });
+  }
+
+  SnackBar snackBarEmptyDeckOfCard() {
+    return SnackBar(
+      content: Text(
+        'Колода пуста. Начать заново?',
+      ),
+      action: SnackBarAction(
+          label: "Да",
+          onPressed: () {
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => const GameScreen(gameCardList: [])));
+          }),
+    );
   }
 }
