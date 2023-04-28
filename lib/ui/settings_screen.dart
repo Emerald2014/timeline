@@ -155,14 +155,14 @@ class _SettingsScreenState extends State<SettingScreen> {
         ),
         ElevatedButton(
             onPressed: () {
-              if (changedGameCardList.length > 2) {
+              if (changedGameCardList.length > 5) {
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) =>
                         GameScreen(gameCardList: changedGameCardList)));
               } else {
                 final snackBar = SnackBar(
                   content: Text(
-                    'Для игры необходимо не менее 3-х карт',
+                    'Для игры необходимо не менее 6-ти карт',
                   ),
                 );
                 ScaffoldMessenger.of(context).showSnackBar(snackBar);
