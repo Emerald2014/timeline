@@ -33,6 +33,7 @@ class _GameScreenState extends State<GameScreen> {
   int indexOfClickedCard = -1;
   bool isVisibleCardPreview = false;
   int indexOfClickedCardForHelp = -1;
+  var colorSeparator;
 
   @override
   void initState() {
@@ -184,7 +185,10 @@ class _GameScreenState extends State<GameScreen> {
                         style: TextStyle(fontSize: 10),
                         textAlign: TextAlign.center,
                       ),
-                      Image.asset(boardCard.image, height: 70,)
+                      Image.asset(
+                        boardCard.image,
+                        height: 70,
+                      )
                     ],
                   ),
                 ),
@@ -256,21 +260,26 @@ class _GameScreenState extends State<GameScreen> {
         ),
       ),
       onDragStarted: () {
-        setState(() {});
+        setState(() {
+          colorSeparator = Colors.blueAccent;
+        });
       },
       onDragCompleted: () {
         setState(() {
           removeAndAddCard();
+          colorSeparator = null;
         });
       },
       onDraggableCanceled: (Velocity velocity, Offset offset) {
         setState(() {
           removeAndAddCard();
+          colorSeparator = null;
         });
       },
       onDragEnd: (DraggableDetails details) {
         setState(() {
           removeAndAddCard();
+          colorSeparator = null;
         });
       },
     );
@@ -339,9 +348,10 @@ class _GameScreenState extends State<GameScreen> {
       builder: (context, candidates, rejects) {
         return candidates.isNotEmpty
             ? _buildDropPreview(context, candidates[0]!)
-            : const SizedBox(
+            : Container(
                 width: 5,
                 height: 5,
+                color: colorSeparator,
               );
       },
       onWillAccept: (value) => !boardCardList.contains(value),
