@@ -105,10 +105,17 @@ class _GameScreenState extends State<GameScreen> {
 //            list view separated will build a widget between 2 list items to act as a separator
                 Text("Рука игрока"),
                 Expanded(
-                    child: ListView.builder(
-                  itemBuilder: _buildListHandCard,
-                  // separatorBuilder: _buildDragTargetsA,
-                  itemCount: handCardList.length,
+                    child: Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 120, 0),
+                  child: GridView.builder(
+                    itemBuilder: _buildListHandCard,
+                    // separatorBuilder: _buildDragTargetsA,
+                    itemCount: handCardList.length,
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                    ),
+                  ),
                 )),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -206,22 +213,33 @@ class _GameScreenState extends State<GameScreen> {
       feedback: Card(
         child: SizedBox(
           width: 100,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              handCard.name,
-              style: TextStyle(fontSize: 12),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    handCard.name,
+                    style: TextStyle(fontSize: 12),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Image.asset(
+                  handCard.image,
+                  height: 70,
+                )
+              ],
             ),
           ),
         ),
       ),
       childWhenDragging: Container(
         color: Colors.grey,
-        width: 40,
-        height: 40,
+        width: 50,
+        height: 120,
       ),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(0, 0, 120, 0),
+        padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
         child: GestureDetector(
           onTap: () {
             if (isVisibleCardPreview) {
@@ -235,6 +253,27 @@ class _GameScreenState extends State<GameScreen> {
           },
           child: Card(
             child: SizedBox(
+              width: 100,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        handCard.name,
+                        style: TextStyle(fontSize: 12),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    Image.asset(
+                      handCard.image,
+                      height: 70,
+                    )
+                  ],
+                ),
+              ),
+            ),
+/*            child: SizedBox(
               width: 100,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -255,7 +294,7 @@ class _GameScreenState extends State<GameScreen> {
                   ],
                 ),
               ),
-            ),
+            ),*/
           ),
         ),
       ),
