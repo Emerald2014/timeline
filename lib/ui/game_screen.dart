@@ -265,6 +265,11 @@ class _GameScreenState extends State<GameScreen> {
                         textAlign: TextAlign.center,
                       ),
                     ),
+                    Visibility(
+                        child: Text(
+                          handCard.year.toString(),
+                        ),
+                        visible: checkVisibility(index)),
                     Image.asset(
                       handCard.image,
                       height: 70,
@@ -407,6 +412,7 @@ class _GameScreenState extends State<GameScreen> {
             boardCardList.insert(index + 1, item);
             handCardList.removeWhere((item) => item.name == value);
             indexOfLastCard = index + 1;
+            indexOfClickedCardForHelp = -1;
           });
         } else {
           setState(() {
