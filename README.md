@@ -1,23 +1,7 @@
-# timeline
+# Игра "Линия времени"
 
-Game Timeline
+## TODO
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-
-
-TODO
--
 * Добавить анимацию
 * Создать БД и перенести туда все карточки
 * Создать БД в FireBase и при старте приложения синхронизировать с локальной БД
@@ -37,11 +21,16 @@ TODO
 // Добавить возможность брать на руку еще карты из колоды по клику. На колоде отображается оставшееся кол-во карт
 // Добавить подсказки. Например показать дату на любой выбранной карточке на руке
 
-Второй режим игры "Раньше-позже"
-- 
+## Второй режим игры "Раньше-позже"
+
 Суть игры в том, что есть две карточки событий и нужно кнопками "Раньше" и "Позже" выбрать время события второй карточки относительно первой
--
-Варианты игры
--- 
+
+### Варианты игры
+* Праздники в течение года
+* Обычные карточки таймлайна
+* Дата рождения известных личностей
+
+### Идеи
+* Первая карточка для выбора рандомно. Вторая относительно первой 
 
 - Сделать макет игры 

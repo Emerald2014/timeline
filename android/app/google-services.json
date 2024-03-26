@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "765912486078",
+    "firebase_url": "https://for-the-first-time-c8aaa-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "for-the-first-time-c8aaa",
+    "storage_bucket": "for-the-first-time-c8aaa.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:765912486078:android:010a5bbd59253a01c40eef",
+        "android_client_info": {
+          "package_name": "ru.kudesnik.timeline"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "765912486078-qccblg8k3ahtrniro8mm6n01b0eio8fs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKn3Z5cWVgyz_Uh1lzeKrH2ZHXAONjTus"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "765912486078-qccblg8k3ahtrniro8mm6n01b0eio8fs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
