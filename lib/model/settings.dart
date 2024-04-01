@@ -1,4 +1,4 @@
-import '../data/enums.dart';
+import 'enums.dart';
 
 class Settings {
   final List<Category> category;

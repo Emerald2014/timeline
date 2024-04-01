@@ -11,3 +11,7 @@ final class GameInitial extends GameState {
 final class CardInsertComplete extends GameState {
   const CardInsertComplete();
 }
+
+final class HandIsEmpty extends GameState {
+  const HandIsEmpty() : super();
+}

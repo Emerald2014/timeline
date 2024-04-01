@@ -9,3 +9,11 @@ final class CardInserted extends GameEvent {
 
   final int cardInsertPosition;
 }
+
+final class CardInsertBeforePressed extends GameEvent {
+  CardInsertBeforePressed();
+}
+
+final class CardInsertLaterPressed extends GameEvent {
+  CardInsertLaterPressed();
+}

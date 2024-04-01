@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:timeline/model/game_card.dart';
-import 'package:timeline/model/settings.dart';
 import 'package:timeline/ui/widgets/drop_down.dart';
 
-import '../data/card_list.dart';
-import '../data/enums.dart';
+import '../model/models.dart';
+import '../model/settings.dart';
+import '../providers/card_list.dart';
 import 'game_screen.dart';
 
 class SettingScreen extends StatefulWidget {

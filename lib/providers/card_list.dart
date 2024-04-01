@@ -1,5 +1,4 @@
-import 'package:timeline/data/enums.dart';
-import 'package:timeline/model/game_card.dart';
+import '../model/models.dart';
 
 List<GameCard> cardListOnHand = [
   GameCard(

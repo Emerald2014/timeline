@@ -1,12 +1,13 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:timeline/data/card_list.dart';
-import 'package:timeline/data/enums.dart';
-import 'package:timeline/model/game_card.dart';
 import 'package:timeline/ui/settings_screen.dart';
 import 'package:timeline/ui/widgets/card_screen.dart';
 import 'package:timeline/ui/widgets/deck_of_cards.dart';
+
+
+import '../model/models.dart';
+import '../providers/card_list.dart';
 
 class GameScreen extends StatefulWidget {
   final List<GameCard> gameCardList;
@@ -39,7 +40,7 @@ class _GameScreenState extends State<GameScreen> {
   void initState() {
     deckOfCard.clear();
     if (gameCardList.isEmpty) {
-      deckOfCard.addAll(cardListOnHand);
+      deckOfCard.addAll(cardListOnHand as Iterable<GameCard>);
     } else {
       deckOfCard.addAll(gameCardList);
     }

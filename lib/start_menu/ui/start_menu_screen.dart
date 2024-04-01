@@ -40,7 +40,7 @@ class StartMenuView extends StatelessWidget {
                 ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => BeforeLaterGameScreen()));
+                          builder: (context) => const BeforeLaterGameScreen()));
                     },
                     child: const Text("Игра \"Раньше-позже\"")),
               ],

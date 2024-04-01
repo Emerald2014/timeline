@@ -1,6 +1,8 @@
-import '../data/enums.dart';
+import 'package:equatable/equatable.dart';
 
-class GameCard {
+import 'enums.dart';
+
+class GameCard extends Equatable {
   final String name;
   final int year;
   late final DateTime? date;
@@ -28,4 +30,22 @@ class GameCard {
       this.level = Level.hard,
       required this.century,
       this.id = 0});
+
+  @override
+  List<Object?> get props => [
+        name,
+        year,
+        date,
+        image,
+        description,
+        source,
+        author,
+        category,
+        geography,
+        level,
+        century,
+        id
+      ];
+  static GameCard empty = GameCard(
+      name: '', year: -1, category: Category.all, century: Century.XXI);
 }
