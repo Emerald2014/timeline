@@ -17,6 +17,7 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     on<CardInserted>(_onCardInserted);
     on<CardInsertBeforePressed>(_onCardInsertedBefore);
     on<CardInsertLaterPressed>(_onCardInsertedLater);
+    on<GameRestarted>(_onGameRestarted);
   }
 
   final GameRepository gameRepository;
@@ -61,13 +62,17 @@ class GameBloc extends Bloc<GameEvent, GameState> {
 
     gameRepository.removeCardFromList(currentTableCard!.name);
     gameRepository.removeCardFromList(currentHandCard!.name);
-    currentTableCard = gameRepository.currentCardList[0];
-    currentHandCard = gameRepository.currentCardList[1];
-    emit(state.copyWith(
-        handGameCard: currentHandCard, tableGameCard: currentTableCard));
+    if (cardListIsEmpty()) {
+      emit(state.copyWith(gameStatus: GameStatus.endGame));
+    } else {
+      currentTableCard = gameRepository.currentCardList[0];
+      currentHandCard = gameRepository.currentCardList[1];
+      emit(state.copyWith(
+          handGameCard: currentHandCard, tableGameCard: currentTableCard));
+    }
   }
 
-  Future<void> _onCardInsertedLater(
+  void _onCardInsertedLater(
       CardInsertLaterPressed event, Emitter<GameState> emit) async {
     if (compareYearCard(ChooseButton.later)) {
       emit(state.copyWith(gameRightAnswer: state.gameRightAnswer + 1));
@@ -83,6 +88,16 @@ class GameBloc extends Bloc<GameEvent, GameState> {
         handGameCard: currentHandCard, tableGameCard: currentTableCard));
   }
 
+  void _onGameRestarted(GameRestarted event, Emitter<GameState> emit) {
+    emit(state.copyWith(
+      gameStatus: GameStatus.initial,
+      gameRightAnswer: 0,
+      gameWrongAnswer: 0,
+    ));
+    gameRepository.clearCardList();
+    getInitialCard();
+  }
+
   bool compareYearCard(ChooseButton button) {
     switch (button) {
       case ChooseButton.before:
@@ -95,6 +110,10 @@ class GameBloc extends Bloc<GameEvent, GameState> {
           return currentHandCard!.year > currentTableCard!.year;
         }
     }
+  }
+
+  bool cardListIsEmpty() {
+    return gameRepository.currentCardList.length < 2;
   }
 
 // bool compareYear(int indexBoardCard, GameCard cardFromHand) {

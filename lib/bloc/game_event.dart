@@ -17,3 +17,7 @@ final class CardInsertBeforePressed extends GameEvent {
 final class CardInsertLaterPressed extends GameEvent {
   CardInsertLaterPressed();
 }
+
+final class GameRestarted extends GameEvent {
+  GameRestarted();
+}

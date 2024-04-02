@@ -19,4 +19,8 @@ class GameRepository {
   void removeCardFromList(String name) {
     currentCardList.removeWhere((item) => item.name == name);
   }
+
+  void clearCardList() {
+    currentCardList.clear();
+  }
 }
