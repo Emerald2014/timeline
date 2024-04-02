@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:timeline/model/enums.dart';
 
 import '../../ui/widgets/background.dart';
 import '../bloc/game_bloc.dart';
+import '../model/game_card.dart';
 import '../repository/game_repository.dart';
 
 class BeforeLaterGameScreen extends StatelessWidget {
@@ -12,38 +14,86 @@ class BeforeLaterGameScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // return BeforeLaterGameScreen();
     return BlocProvider(
-        create: (_) => GameBloc(gameRepository: GameRepository()),
-        child: const BeforeLaterGameView());
+        create: (context) => GameBloc(gameRepository: GameRepository()),
+        // create: (context) => GameBloc(gameRepository: context.read<GameRepository>()),
+        child: BeforeLaterGameView());
   }
 }
 
-class BeforeLaterGameView extends StatelessWidget {
+class BeforeLaterGameView extends StatefulWidget {
   const BeforeLaterGameView({super.key});
 
+  @override
+  State<BeforeLaterGameView> createState() => _BeforeLaterGameViewState();
+}
+
+class _BeforeLaterGameViewState extends State<BeforeLaterGameView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Игра Раньше-позже"),
       ),
-      body: Stack(
-        children: [
-          const Background(),
-          Center(child: const Actions()),
-          // const GameTableView(),
-          // GameHandView(),
-        ],
-      ),
+      body: BlocBuilder<GameBloc, GameState>(
+          // listener: (context, state) {},
+          builder: (context, state) {
+        context.read<GameBloc>().getInitialCard();
+        final firstTableCard = state.tableGameCard ??
+            GameCard(
+                name: "name",
+                year: -1,
+                category: Category.events,
+                century: Century.XXI);
+        final firstHandCard = state.handGameCard ??
+            GameCard(
+                name: "name",
+                year: -1,
+                category: Category.events,
+                century: Century.XXI);
+        return Stack(
+          children: [
+            const Background(),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                GameTableView(firstGameCard: firstTableCard),
+                Center(child: const Actions()),
+                GameHandView(firstGameCard: firstHandCard),
+              ],
+            )
+
+            // GameHandView(),
+          ],
+        );
+      }),
     );
   }
 }
 
 class GameTableView extends StatelessWidget {
-  const GameTableView({super.key});
+  GameTableView({required this.firstGameCard, super.key});
+
+  GameCard firstGameCard;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox();
+    return Row(
+      children: [card(firstGameCard)],
+    );
+  }
+}
+
+class GameHandView extends StatelessWidget {
+  GameHandView({required this.firstGameCard, super.key});
+
+  GameCard firstGameCard;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [card(firstGameCard)],
+    );
   }
 }
 
@@ -56,26 +106,51 @@ class Actions extends StatelessWidget {
       return Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          ...switch (state) {
-            GameInitial() => [
-                ElevatedButton(
-                    onPressed: () {
-                      context.read<GameBloc>().add(CardInsertBeforePressed());
-                    },
-                    child: Text("Раньше")),
-                ElevatedButton(
-                    onPressed: () {
-                      context.read<GameBloc>().add(CardInsertLaterPressed());
-                    },
-                    child: Text("Позже")),
-              ],
-            // TODO: Handle this case.
-            CardInsertComplete() => throw UnimplementedError(),
-            // TODO: Handle this case.
-            HandIsEmpty() => throw UnimplementedError(),
-          }
+          ElevatedButton(
+              onPressed: () {
+                context.read<GameBloc>().add(CardInsertBeforePressed());
+              },
+              child: Text("Раньше")),
+          ElevatedButton(
+              onPressed: () {
+                context.read<GameBloc>().add(CardInsertLaterPressed());
+              },
+              child: Text("Позже")),
         ],
       );
     });
   }
+}
+
+Widget card(GameCard gameCard) {
+  return Center(
+    child: Card(
+      child: SizedBox(
+        width: 100,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  gameCard.name,
+                  style: TextStyle(fontSize: 12),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              Text(
+                gameCard.year.toString(),
+                style: TextStyle(fontSize: 10),
+                textAlign: TextAlign.center,
+              ),
+              Image.asset(
+                gameCard.image,
+                height: 70,
+              )
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
 }

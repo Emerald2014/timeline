@@ -12,21 +12,30 @@ part 'game_state.dart';
 
 class GameBloc extends Bloc<GameEvent, GameState> {
   // StreamSubscription<int>? _tickerSubscription;
-
-  GameBloc({required GameRepository gameRepository})
-      : _gameRepository = gameRepository,
-        super(const GameInitial()) {
+// static  GameCard initialCard = _gam;
+  GameBloc({required this.gameRepository}) : super(GameState()) {
     on<CardInserted>(_onCardInserted);
     on<CardInsertBeforePressed>(_onCardInsertedBefore);
     on<CardInsertLaterPressed>(_onCardInsertedLater);
   }
 
-  final GameRepository _gameRepository;
+  final GameRepository gameRepository;
 
   @override
   Future<void> close() {
     // _tickerSubscription?.cancel();
     return super.close();
+  }
+
+  Future<void> getInitialCard() async {
+    try {
+      final initTableCard = await gameRepository.getGameCards();
+      emit(state.copyWith(
+          handGameCard: initTableCard[0], tableGameCard: initTableCard[1]));
+    } on Exception {}
+
+    var initialCard = await _tryGetGameCards();
+    // emit(state.listGameCard.);
   }
 
   void _onCardInserted(CardInserted event, Emitter<GameState> emit) {
@@ -47,7 +56,7 @@ class GameBloc extends Bloc<GameEvent, GameState> {
 
   Future<List<GameCard>?> _tryGetGameCards() async {
     try {
-      var localGameRepository = await _gameRepository.getGameCards();
+      var localGameRepository = await gameRepository.getGameCards();
       return localGameRepository;
     } catch (_) {}
   }
