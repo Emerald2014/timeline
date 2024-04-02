@@ -37,19 +37,9 @@ class _BeforeLaterGameViewState extends State<BeforeLaterGameView> {
       body: BlocBuilder<GameBloc, GameState>(
           // listener: (context, state) {},
           builder: (context, state) {
-        context.read<GameBloc>().getInitialCard();
-        final firstTableCard = state.tableGameCard ??
-            GameCard(
-                name: "name",
-                year: -1,
-                category: Category.events,
-                century: Century.XXI);
-        final firstHandCard = state.handGameCard ??
-            GameCard(
-                name: "name",
-                year: -1,
-                category: Category.events,
-                century: Century.XXI);
+        if (state.gameStatus == GameStatus.initial) {
+          context.read<GameBloc>().getInitialCard();
+        }
         return Stack(
           children: [
             const Background(),
@@ -57,9 +47,24 @@ class _BeforeLaterGameViewState extends State<BeforeLaterGameView> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                GameTableView(firstGameCard: firstTableCard),
-                Center(child: const Actions()),
-                GameHandView(firstGameCard: firstHandCard),
+                Score(
+                    gameRightAnswer: state.gameRightAnswer,
+                    gameWrongAnswer: state.gameWrongAnswer),
+                GameTableView(
+                    firstGameCard: state.tableGameCard ??
+                        GameCard(
+                            name: "name",
+                            year: -2,
+                            category: Category.events,
+                            century: Century.XXI)),
+                const Center(child: Actions()),
+                GameHandView(
+                    firstGameCard: state.handGameCard ??
+                        GameCard(
+                            name: "name",
+                            year: -2,
+                            category: Category.events,
+                            century: Century.XXI)),
               ],
             )
 
@@ -67,6 +72,36 @@ class _BeforeLaterGameViewState extends State<BeforeLaterGameView> {
           ],
         );
       }),
+    );
+  }
+}
+
+class Score extends StatelessWidget {
+  Score(
+      {super.key,
+      required this.gameRightAnswer,
+      required this.gameWrongAnswer});
+
+  int gameRightAnswer;
+  int gameWrongAnswer;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        Text(
+          "Верно: $gameRightAnswer",
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        Text(
+          "Не верно: $gameWrongAnswer",
+          style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.deepOrange),
+        ),
+      ],
     );
   }
 }
@@ -79,6 +114,7 @@ class GameTableView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [card(firstGameCard)],
     );
   }
@@ -92,6 +128,7 @@ class GameHandView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [card(firstGameCard)],
     );
   }

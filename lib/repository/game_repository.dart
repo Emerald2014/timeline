@@ -9,8 +9,14 @@ class GameRepository {
             gameLocalStorageApiClient ?? GameLocalStorageApiClient();
   final GameLocalStorageApiClient _gameLocalStorageApiClient;
 
-  Future<List<GameCard>> getGameCards() async {
-    final cards = _gameLocalStorageApiClient.getCardsFromLocal();
-    return cards;
+  List<GameCard> currentCardList = [];
+
+  Future<void> getGameCards() async {
+    currentCardList = _gameLocalStorageApiClient.getCardsFromLocal();
+    currentCardList.shuffle();
+  }
+
+  void removeCardFromList(String name) {
+    currentCardList.removeWhere((item) => item.name == name);
   }
 }

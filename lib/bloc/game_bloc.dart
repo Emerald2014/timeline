@@ -20,6 +20,8 @@ class GameBloc extends Bloc<GameEvent, GameState> {
   }
 
   final GameRepository gameRepository;
+  GameCard? currentTableCard;
+  GameCard? currentHandCard;
 
   @override
   Future<void> close() {
@@ -29,12 +31,18 @@ class GameBloc extends Bloc<GameEvent, GameState> {
 
   Future<void> getInitialCard() async {
     try {
-      final initTableCard = await gameRepository.getGameCards();
+      gameRepository.getGameCards();
+      log("gameRepository.currentCardList = ${gameRepository.currentCardList.length}");
+      log("handGameCard: gameRepository.currentCardList[0] = ${gameRepository.currentCardList[0].name}");
+      currentTableCard = gameRepository.currentCardList[0];
+      currentHandCard = gameRepository.currentCardList[1];
+
       emit(state.copyWith(
-          handGameCard: initTableCard[0], tableGameCard: initTableCard[1]));
+          handGameCard: currentHandCard,
+          tableGameCard: currentTableCard,
+          gameStatus: GameStatus.runGame));
     } on Exception {}
 
-    var initialCard = await _tryGetGameCards();
     // emit(state.listGameCard.);
   }
 
@@ -45,20 +53,48 @@ class GameBloc extends Bloc<GameEvent, GameState> {
   void _onCardInsertedBefore(
       CardInsertBeforePressed event, Emitter<GameState> emit) {
     log('TL _onCardInsertedBefore');
+    if (compareYearCard(ChooseButton.before)) {
+      emit(state.copyWith(gameRightAnswer: state.gameRightAnswer + 1));
+    } else {
+      emit(state.copyWith(gameWrongAnswer: state.gameWrongAnswer + 1));
+    }
+
+    gameRepository.removeCardFromList(currentTableCard!.name);
+    gameRepository.removeCardFromList(currentHandCard!.name);
+    currentTableCard = gameRepository.currentCardList[0];
+    currentHandCard = gameRepository.currentCardList[1];
+    emit(state.copyWith(
+        handGameCard: currentHandCard, tableGameCard: currentTableCard));
   }
 
   Future<void> _onCardInsertedLater(
       CardInsertLaterPressed event, Emitter<GameState> emit) async {
-    log('TL _onCardInsertedLater');
-    final listGameCard = await _tryGetGameCards();
-    log('TL listGameCard = ${listGameCard?.length} ');
+    if (compareYearCard(ChooseButton.later)) {
+      emit(state.copyWith(gameRightAnswer: state.gameRightAnswer + 1));
+    } else {
+      emit(state.copyWith(gameWrongAnswer: state.gameWrongAnswer + 1));
+    }
+
+    gameRepository.removeCardFromList(currentTableCard!.name);
+    gameRepository.removeCardFromList(currentHandCard!.name);
+    currentTableCard = gameRepository.currentCardList[0];
+    currentHandCard = gameRepository.currentCardList[1];
+    emit(state.copyWith(
+        handGameCard: currentHandCard, tableGameCard: currentTableCard));
   }
 
-  Future<List<GameCard>?> _tryGetGameCards() async {
-    try {
-      var localGameRepository = await gameRepository.getGameCards();
-      return localGameRepository;
-    } catch (_) {}
+  bool compareYearCard(ChooseButton button) {
+    switch (button) {
+      case ChooseButton.before:
+        {
+          return currentHandCard!.year < currentTableCard!.year;
+        }
+
+      case ChooseButton.later:
+        {
+          return currentHandCard!.year > currentTableCard!.year;
+        }
+    }
   }
 
 // bool compareYear(int indexBoardCard, GameCard cardFromHand) {
@@ -79,3 +115,5 @@ class GameBloc extends Bloc<GameEvent, GameState> {
 //   return isTruePosition;
 // }
 }
+
+enum ChooseButton { before, later }
