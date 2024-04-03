@@ -4,6 +4,7 @@ class GameState {
   const GameState(
       {this.tableGameCard,
       this.handGameCard,
+      this.previousGameCard,
       this.gameStatus = GameStatus.initial,
       this.gameType = GameType.selectedType,
       this.gameRightAnswer = 0,
@@ -14,6 +15,7 @@ class GameState {
 
   final GameCard? tableGameCard;
   final GameCard? handGameCard;
+  final GameCard? previousGameCard;
   final GameStatus gameStatus;
   final GameType gameType;
   final int gameRightAnswer;
@@ -25,6 +27,7 @@ class GameState {
   GameState copyWith(
       {GameCard? tableGameCard,
       GameCard? handGameCard,
+      GameCard? previousGameCard,
       GameStatus? gameStatus,
       GameType? gameType,
       int? gameRightAnswer,
@@ -35,6 +38,7 @@ class GameState {
     return GameState(
       tableGameCard: tableGameCard ?? this.tableGameCard,
       handGameCard: handGameCard ?? this.handGameCard,
+      previousGameCard: previousGameCard ?? this.previousGameCard,
       gameStatus: gameStatus ?? this.gameStatus,
       gameType: gameType ?? this.gameType,
       gameRightAnswer: gameRightAnswer ?? this.gameRightAnswer,
@@ -48,4 +52,4 @@ class GameState {
 
 enum GameStatus { initial, runGame, endGame }
 
-enum GameType { selectedType, firstType, secondType }
+enum GameType { selectedType, firstType, secondType, thirdType }

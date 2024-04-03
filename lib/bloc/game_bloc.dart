@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
+import 'package:timeline/model/models.dart';
 
 import '../../model/game_card.dart';
 import '../repository/game_repository.dart';
@@ -11,7 +12,7 @@ part 'game_event.dart';
 part 'game_state.dart';
 
 class GameBloc extends Bloc<GameEvent, GameState> {
-  GameBloc({required this.gameRepository}) : super(GameState()) {
+  GameBloc({required this.gameRepository}) : super(const GameState()) {
     on<CardInserted>(_onCardInserted);
     on<CardInsertBeforePressed>(_onCardInsertedBefore);
     on<CardInsertLaterPressed>(_onCardInsertedLater);
@@ -49,7 +50,6 @@ class GameBloc extends Bloc<GameEvent, GameState> {
 
   void _onCardInsertedBefore(
       CardInsertBeforePressed event, Emitter<GameState> emit) {
-    log('TL _onCardInsertedBefore');
     if (compareYearCard(ChooseButton.before)) {
       emit(state.copyWith(
           gameRightAnswer: state.gameRightAnswer + 1, rightAnswer: true));
@@ -57,18 +57,36 @@ class GameBloc extends Bloc<GameEvent, GameState> {
       emit(state.copyWith(
           gameWrongAnswer: state.gameWrongAnswer + 1, rightAnswer: false));
     }
+    emit(state.copyWith(previousGameCard: event.gameCard));
+    if (state.gameType == GameType.thirdType) {
+      if (event.gameCard != currentTableCard) {
+        gameRepository.removeCardFromList(currentTableCard!.name);
+      } else {
+        gameRepository.removeCardFromList(currentHandCard!.name);
+      }
+      currentHandCard = event.gameCard;
+      currentTableCard = gameRepository.currentCardList[1];
+    } else {
+      gameRepository.removeCardFromList(currentTableCard!.name);
+      gameRepository.removeCardFromList(currentHandCard!.name);
+    }
 
-    gameRepository.removeCardFromList(currentTableCard!.name);
-    gameRepository.removeCardFromList(currentHandCard!.name);
     if (cardListIsEmpty()) {
       emit(state.copyWith(gameStatus: GameStatus.endGame));
     } else {
-      currentTableCard = gameRepository.currentCardList[0];
-      currentHandCard = gameRepository.currentCardList[1];
-      emit(state.copyWith(
-          handGameCard: currentHandCard,
-          tableGameCard: currentTableCard,
-          playedGameCard: state.playedGameCard + 2));
+      if (state.gameType != GameType.thirdType) {
+        currentTableCard = gameRepository.currentCardList[0];
+        currentHandCard = gameRepository.currentCardList[1];
+        emit(state.copyWith(
+            handGameCard: currentHandCard,
+            tableGameCard: currentTableCard,
+            playedGameCard: state.playedGameCard + 2));
+      } else {
+        emit(state.copyWith(
+            handGameCard: currentHandCard,
+            tableGameCard: currentTableCard,
+            playedGameCard: state.playedGameCard + 1));
+      }
     }
   }
 
@@ -81,18 +99,36 @@ class GameBloc extends Bloc<GameEvent, GameState> {
       emit(state.copyWith(
           gameWrongAnswer: state.gameWrongAnswer + 1, rightAnswer: false));
     }
+    emit(state.copyWith(previousGameCard: event.gameCard));
+    if (state.gameType == GameType.thirdType) {
+      if (event.gameCard != currentTableCard) {
+        gameRepository.removeCardFromList(currentTableCard!.name);
+      } else {
+        gameRepository.removeCardFromList(currentHandCard!.name);
+      }
+      currentTableCard = event.gameCard;
+      currentHandCard = gameRepository.currentCardList[1];
+    } else {
+      gameRepository.removeCardFromList(currentTableCard!.name);
+      gameRepository.removeCardFromList(currentHandCard!.name);
+    }
 
-    gameRepository.removeCardFromList(currentTableCard!.name);
-    gameRepository.removeCardFromList(currentHandCard!.name);
     if (cardListIsEmpty()) {
       emit(state.copyWith(gameStatus: GameStatus.endGame));
     } else {
-      currentTableCard = gameRepository.currentCardList[0];
-      currentHandCard = gameRepository.currentCardList[1];
-      emit(state.copyWith(
-          handGameCard: currentHandCard,
-          tableGameCard: currentTableCard,
-          playedGameCard: state.playedGameCard + 2));
+      if (state.gameType != GameType.thirdType) {
+        currentTableCard = gameRepository.currentCardList[0];
+        currentHandCard = gameRepository.currentCardList[1];
+        emit(state.copyWith(
+            handGameCard: currentHandCard,
+            tableGameCard: currentTableCard,
+            playedGameCard: state.playedGameCard + 2));
+      } else {
+        emit(state.copyWith(
+            handGameCard: currentHandCard,
+            tableGameCard: currentTableCard,
+            playedGameCard: state.playedGameCard + 1));
+      }
     }
   }
 
@@ -118,6 +154,8 @@ class GameBloc extends Bloc<GameEvent, GameState> {
         emit(state.copyWith(gameType: GameType.secondType));
       case GameType.selectedType:
       // TODO: Handle this case.
+      case GameType.thirdType:
+        emit(state.copyWith(gameType: GameType.thirdType));
     }
   }
 

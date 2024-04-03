@@ -57,6 +57,8 @@ class _BeforeLaterGameViewState extends State<BeforeLaterGameView> {
               return FirstGameType(state: state);
             case GameType.secondType:
               return SecondGameType(state: state);
+            case GameType.thirdType:
+              return ThirdGameType(state: state);
           }
         }
       }),
@@ -91,6 +93,13 @@ class SelectGameType extends StatelessWidget {
                         .add(GameTypeSelected(gameType: GameType.secondType));
                   },
                   child: const Text("Второй тип игры")),
+              ElevatedButton(
+                  onPressed: () {
+                    context
+                        .read<GameBloc>()
+                        .add(GameTypeSelected(gameType: GameType.thirdType));
+                  },
+                  child: const Text("Третий тип игры")),
             ],
           ),
         )
@@ -201,6 +210,63 @@ class SecondGameType extends StatelessWidget {
   }
 }
 
+class ThirdGameType extends StatelessWidget {
+  ThirdGameType({super.key, required this.state});
+
+  GameState state;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(children: [
+      const Background(),
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                CardCount(
+                  totalGameCard: state.totalGameCard,
+                  playedGameCard: state.playedGameCard,
+                ),
+                Score(
+                    gameRightAnswer: state.gameRightAnswer,
+                    gameWrongAnswer: state.gameWrongAnswer),
+              ],
+            ),
+            if (state.playedGameCard != 0) IsRightAnswer(state),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  "Что раньше?",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    LeftGameCard(gameCard: state.handGameCard!),
+                    Text(
+                      "ИЛИ",
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    RightGameCard(gameCard: state.tableGameCard!)
+                  ],
+                )
+              ],
+            ),
+            SizedBox(),
+          ],
+        ),
+      )
+    ]);
+  }
+}
+
 class IsRightAnswer extends StatelessWidget {
   IsRightAnswer(this.state);
 
@@ -208,17 +274,29 @@ class IsRightAnswer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return state.rightAnswer
-        ? Text(
-            "Верно!",
-            style: TextStyle(
-                fontWeight: FontWeight.bold, fontSize: 36, color: Colors.green),
-          )
-        : Text("НЕ верно!",
-            style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 36,
-                color: Colors.deepOrange));
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        state.rightAnswer
+            ? Text(
+                "Верно!",
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 36,
+                    color: Colors.green),
+              )
+            : Text("НЕ верно!",
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 36,
+                    color: Colors.deepOrange)),
+        Text(
+          "${state.previousGameCard!.name} (${state.previousGameCard!.year})",
+          style: TextStyle(fontSize: 24),
+          textAlign: TextAlign.center,
+        )
+      ],
+    );
   }
 }
 
@@ -229,30 +307,27 @@ class CardCount extends StatelessWidget {
   int totalGameCard;
   int playedGameCard;
 
-  double _stepIndicator = 0;
   double _currentIndicatorPosition = 0;
 
   @override
   Widget build(BuildContext context) {
     _currentIndicatorPosition =
-        (1 / totalGameCard * (totalGameCard - playedGameCard));
+        1 - (1 / totalGameCard * (totalGameCard - playedGameCard));
 
-    return Column(
+    return Stack(
       children: [
         LinearProgressIndicator(
           value: _currentIndicatorPosition,
-          minHeight: 20,
+          minHeight: 24,
           color: Colors.orange,
           backgroundColor: Colors.yellowAccent,
+          borderRadius: const BorderRadius.all(Radius.circular(12)),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Text(
-              "Карт осталось: ${totalGameCard - playedGameCard} / $totalGameCard",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-          ],
+        Center(
+          child: Text(
+            "Прогресс: ${playedGameCard} / $totalGameCard",
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
         ),
       ],
     );
@@ -334,16 +409,36 @@ class Score extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        Text(
-          "Верно: $gameRightAnswer",
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        Text(
-          "Не верно: $gameWrongAnswer",
-          style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.deepOrange),
+        RichText(
+          textAlign: TextAlign.center,
+          text: TextSpan(
+            style: DefaultTextStyle.of(context).style,
+            children: <TextSpan>[
+              TextSpan(
+                text: "Ответы: ",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+              TextSpan(
+                text: gameRightAnswer.toString(),
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: Colors.green),
+              ),
+              TextSpan(text: " / "),
+              TextSpan(
+                text: gameWrongAnswer.toString(),
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: Colors.red),
+              ),
+              // TextSpan(text: '?'),
+            ],
+          ),
         ),
       ],
     );
@@ -430,12 +525,12 @@ class Actions extends StatelessWidget {
         children: [
           ElevatedButton(
               onPressed: () {
-                context.read<GameBloc>().add(CardInsertBeforePressed());
+                context.read<GameBloc>().add(CardInsertBeforePressed(null));
               },
               child: Text("Раньше")),
           ElevatedButton(
               onPressed: () {
-                context.read<GameBloc>().add(CardInsertLaterPressed());
+                context.read<GameBloc>().add(CardInsertLaterPressed(null));
               },
               child: Text("Позже")),
         ],
@@ -464,10 +559,12 @@ class GameCardView extends StatelessWidget {
         onTap: () {
           isClickable
               ? switch (cardPosition) {
-                  CardPosition.leftPosition =>
-                    context.read<GameBloc>().add(CardInsertBeforePressed()),
-                  CardPosition.rightPosition =>
-                    context.read<GameBloc>().add(CardInsertLaterPressed()),
+                  CardPosition.leftPosition => context
+                      .read<GameBloc>()
+                      .add(CardInsertBeforePressed(gameCard)),
+                  CardPosition.rightPosition => context
+                      .read<GameBloc>()
+                      .add(CardInsertLaterPressed(gameCard)),
                   CardPosition.unknown => throw UnimplementedError(),
                 }
               : {};

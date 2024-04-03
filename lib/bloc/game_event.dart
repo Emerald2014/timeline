@@ -11,11 +11,15 @@ final class CardInserted extends GameEvent {
 }
 
 final class CardInsertBeforePressed extends GameEvent {
-  CardInsertBeforePressed();
+  CardInsertBeforePressed(this.gameCard);
+
+  GameCard? gameCard;
 }
 
 final class CardInsertLaterPressed extends GameEvent {
-  CardInsertLaterPressed();
+  CardInsertLaterPressed(this.gameCard);
+
+  GameCard? gameCard;
 }
 
 final class GameRestarted extends GameEvent {
