@@ -21,6 +21,7 @@ class StartMenuView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Линия времени"),
+        centerTitle: true,
       ),
       body: Stack(
         children: [

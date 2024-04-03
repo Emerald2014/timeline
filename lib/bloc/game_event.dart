@@ -21,3 +21,9 @@ final class CardInsertLaterPressed extends GameEvent {
 final class GameRestarted extends GameEvent {
   GameRestarted();
 }
+
+final class GameTypeSelected extends GameEvent {
+  GameTypeSelected({required this.gameType});
+
+  GameType gameType;
+}

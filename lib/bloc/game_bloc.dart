@@ -11,13 +11,12 @@ part 'game_event.dart';
 part 'game_state.dart';
 
 class GameBloc extends Bloc<GameEvent, GameState> {
-  // StreamSubscription<int>? _tickerSubscription;
-// static  GameCard initialCard = _gam;
   GameBloc({required this.gameRepository}) : super(GameState()) {
     on<CardInserted>(_onCardInserted);
     on<CardInsertBeforePressed>(_onCardInsertedBefore);
     on<CardInsertLaterPressed>(_onCardInsertedLater);
     on<GameRestarted>(_onGameRestarted);
+    on<GameTypeSelected>(_onGameTypeSelected);
   }
 
   final GameRepository gameRepository;
@@ -41,15 +40,12 @@ class GameBloc extends Bloc<GameEvent, GameState> {
       emit(state.copyWith(
           handGameCard: currentHandCard,
           tableGameCard: currentTableCard,
-          gameStatus: GameStatus.runGame));
+          gameStatus: GameStatus.runGame,
+          totalGameCard: gameRepository.currentCardList.length));
     } on Exception {}
-
-    // emit(state.listGameCard.);
   }
 
-  void _onCardInserted(CardInserted event, Emitter<GameState> emit) {
-    // emit();
-  }
+  void _onCardInserted(CardInserted event, Emitter<GameState> emit) {}
 
   void _onCardInsertedBefore(
       CardInsertBeforePressed event, Emitter<GameState> emit) {
@@ -68,7 +64,9 @@ class GameBloc extends Bloc<GameEvent, GameState> {
       currentTableCard = gameRepository.currentCardList[0];
       currentHandCard = gameRepository.currentCardList[1];
       emit(state.copyWith(
-          handGameCard: currentHandCard, tableGameCard: currentTableCard));
+          handGameCard: currentHandCard,
+          tableGameCard: currentTableCard,
+          playedGameCard: state.playedGameCard + 2));
     }
   }
 
@@ -88,7 +86,9 @@ class GameBloc extends Bloc<GameEvent, GameState> {
       currentTableCard = gameRepository.currentCardList[0];
       currentHandCard = gameRepository.currentCardList[1];
       emit(state.copyWith(
-          handGameCard: currentHandCard, tableGameCard: currentTableCard));
+          handGameCard: currentHandCard,
+          tableGameCard: currentTableCard,
+          playedGameCard: state.playedGameCard + 2));
     }
   }
 
@@ -100,6 +100,21 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     ));
     gameRepository.clearCardList();
     gameRepository.getCurrentCardList();
+    emit(state.copyWith(
+        totalGameCard: gameRepository.currentCardList.length,
+        playedGameCard: 0));
+  }
+
+  void _onGameTypeSelected(
+      GameTypeSelected event, Emitter<GameState> emit) async {
+    switch (event.gameType) {
+      case GameType.firstType:
+        emit(state.copyWith(gameType: GameType.firstType));
+      case GameType.secondType:
+        emit(state.copyWith(gameType: GameType.secondType));
+      case GameType.selectedType:
+      // TODO: Handle this case.
+    }
   }
 
   bool compareYearCard(ChooseButton button) {
@@ -119,24 +134,6 @@ class GameBloc extends Bloc<GameEvent, GameState> {
   bool cardListIsEmpty() {
     return gameRepository.currentCardList.length < 2;
   }
-
-// bool compareYear(int indexBoardCard, GameCard cardFromHand) {
-//   bool isTruePosition = true;
-//   GameCard prevBoardCard = boardCardList[indexBoardCard];
-//   GameCard nextBoardCard = boardCardList[indexBoardCard + 1];
-//
-//   if (indexBoardCard > 0 && indexBoardCard < boardCardList.length - 2) {
-//     isTruePosition = cardFromHand.year >= prevBoardCard.year &&
-//         cardFromHand.year <= nextBoardCard.year;
-//   } else if (indexBoardCard == 0) {
-//     isTruePosition = cardFromHand.year <= nextBoardCard.year;
-//   } else if (indexBoardCard == boardCardList.length - 2) {
-//     isTruePosition = cardFromHand.year >= prevBoardCard.year;
-//   } else {
-//     false;
-//   }
-//   return isTruePosition;
-// }
 }
 
 enum ChooseButton { before, later }

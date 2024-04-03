@@ -36,56 +36,179 @@ class _BeforeLaterGameViewState extends State<BeforeLaterGameView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Игра Раньше-позже"),
-      ),
+      appBar: AppBar(title: Text("Игра Раньше-позже")),
       body: BlocBuilder<GameBloc, GameState>(
           // listener: (context, state) {},
           builder: (context, state) {
         // if (state.gameStatus == GameStatus.initial) {
         //   context.read<GameBloc>().getInitialCard();
         // }
+
         if (state.gameStatus == GameStatus.endGame) {
           return EndGameView(
               gameRightAnswer: state.gameRightAnswer,
               gameWrongAnswer: state.gameWrongAnswer,
               state: state);
         } else {
-          return Stack(
-            children: [
-              const Background(),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Score(
-                      gameRightAnswer: state.gameRightAnswer,
-                      gameWrongAnswer: state.gameWrongAnswer),
-                  GameHandView(
-                      firstGameCard: state.handGameCard ??
-                          GameCard(
-                              name: "name",
-                              year: -2,
-                              category: Category.events,
-                              century: Century.XXI)),
-                  TextQuestion(tableCard: state.tableGameCard!),
-                  const Center(child: Actions()),
-                  Divider(),
-                  GameTableView(
-                      firstGameCard: state.tableGameCard ??
-                          GameCard(
-                              name: "name",
-                              year: -2,
-                              category: Category.events,
-                              century: Century.XXI)),
-                ],
-              )
-
-              // GameHandView(),
-            ],
-          );
+          switch (state.gameType) {
+            case GameType.selectedType:
+              return SelectGameType();
+            case GameType.firstType:
+              return FirstGameType(state: state);
+            case GameType.secondType:
+              return SecondGameType(state: state);
+          }
         }
       }),
+    );
+  }
+}
+
+class SelectGameType extends StatelessWidget {
+  const SelectGameType({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        const Background(),
+        Center(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                  onPressed: () {
+                    context
+                        .read<GameBloc>()
+                        .add(GameTypeSelected(gameType: GameType.firstType));
+                  },
+                  child: const Text("Первый тип игры")),
+              ElevatedButton(
+                  onPressed: () {
+                    context
+                        .read<GameBloc>()
+                        .add(GameTypeSelected(gameType: GameType.secondType));
+                  },
+                  child: const Text("Второй тип игры")),
+            ],
+          ),
+        )
+      ],
+    );
+  }
+}
+
+class FirstGameType extends StatelessWidget {
+  FirstGameType({super.key, required this.state});
+
+  GameState state;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        const Background(),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            CardCount(
+              totalGameCard: state.totalGameCard,
+              playedGameCard: state.playedGameCard,
+            ),
+            Score(
+                gameRightAnswer: state.gameRightAnswer,
+                gameWrongAnswer: state.gameWrongAnswer),
+            GameHandView(
+                firstGameCard: state.handGameCard ??
+                    GameCard(
+                        name: "name",
+                        year: -2,
+                        category: Category.events,
+                        century: Century.XXI)),
+            TextQuestion(tableCard: state.tableGameCard!),
+            const Center(child: Actions()),
+            Divider(),
+            GameTableView(
+                firstGameCard: state.tableGameCard ??
+                    GameCard(
+                        name: "name",
+                        year: -2,
+                        category: Category.events,
+                        century: Century.XXI)),
+          ],
+        )
+      ],
+    );
+  }
+}
+
+class SecondGameType extends StatelessWidget {
+  SecondGameType({super.key, required this.state});
+
+  GameState state;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(children: [
+      const Background(),
+      Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          CardCount(
+            totalGameCard: state.totalGameCard,
+            playedGameCard: state.playedGameCard,
+          ),
+          Score(
+              gameRightAnswer: state.gameRightAnswer,
+              gameWrongAnswer: state.gameWrongAnswer),
+          Text(
+            "Что раньше?",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              LeftGameCard(gameCard: state.handGameCard!),
+              Text(
+                "ИЛИ",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              RightGameCard(gameCard: state.tableGameCard!)
+            ],
+          )
+        ],
+      )
+    ]);
+  }
+}
+
+class CardCount extends StatelessWidget {
+  CardCount(
+      {super.key, required this.totalGameCard, required this.playedGameCard});
+
+  int totalGameCard;
+  int playedGameCard;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        Text(
+          "Карт в игре: $totalGameCard",
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        Text(
+          "Осталось: ${totalGameCard - playedGameCard}",
+          style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.deepOrange),
+        ),
+      ],
     );
   }
 }
@@ -190,7 +313,43 @@ class GameTableView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [card(firstGameCard, true)],
+      children: [
+        GameCardView(
+          gameCard: firstGameCard,
+          cardPosition: CardPosition.unknown,
+          isYearVisible: true,
+        )
+      ],
+    );
+  }
+}
+
+class LeftGameCard extends StatelessWidget {
+  LeftGameCard({required this.gameCard, super.key});
+
+  GameCard gameCard;
+
+  @override
+  Widget build(BuildContext context) {
+    return GameCardView(
+      gameCard: gameCard,
+      cardPosition: CardPosition.leftPosition,
+      isClickable: true,
+    );
+  }
+}
+
+class RightGameCard extends StatelessWidget {
+  RightGameCard({required this.gameCard, super.key});
+
+  GameCard gameCard;
+
+  @override
+  Widget build(BuildContext context) {
+    return GameCardView(
+      gameCard: gameCard,
+      cardPosition: CardPosition.rightPosition,
+      isClickable: true,
     );
   }
 }
@@ -204,7 +363,12 @@ class GameHandView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [card(firstGameCard, false)],
+      children: [
+        GameCardView(
+          gameCard: firstGameCard,
+          cardPosition: CardPosition.unknown,
+        )
+      ],
     );
   }
 }
@@ -234,37 +398,67 @@ class Actions extends StatelessWidget {
   }
 }
 
-Widget card(GameCard gameCard, bool isYearVisible) {
-  return Center(
-    child: Card(
-      child: SizedBox(
-        width: 200,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  gameCard.name,
-                  style: TextStyle(fontSize: 12),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              isYearVisible
-                  ? Text(
-                      gameCard.year.toString(),
-                      style: TextStyle(fontSize: 10),
+class GameCardView extends StatelessWidget {
+  GameCardView(
+      {super.key,
+      required this.gameCard,
+      this.isYearVisible = false,
+      this.isClickable = false,
+      required this.cardPosition});
+
+  GameCard gameCard;
+  bool isYearVisible;
+  bool isClickable;
+  CardPosition cardPosition;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: GestureDetector(
+        onTap: () {
+          isClickable
+              ? switch (cardPosition) {
+                  CardPosition.leftPosition =>
+                    context.read<GameBloc>().add(CardInsertBeforePressed()),
+                  CardPosition.rightPosition =>
+                    context.read<GameBloc>().add(CardInsertLaterPressed()),
+                  CardPosition.unknown => throw UnimplementedError(),
+                }
+              : {};
+        },
+        child: Card(
+          child: SizedBox(
+            width: 150,
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      gameCard.name,
+                      style: TextStyle(fontSize: 12),
                       textAlign: TextAlign.center,
-                    )
-                  : Text(""),
-              Image.asset(
-                gameCard.image,
-                height: 100,
-              )
-            ],
+                    ),
+                  ),
+                  isYearVisible
+                      ? Text(
+                          gameCard.year.toString(),
+                          style: TextStyle(fontSize: 10),
+                          textAlign: TextAlign.center,
+                        )
+                      : Text(""),
+                  Image.asset(
+                    gameCard.image,
+                    height: 100,
+                  )
+                ],
+              ),
+            ),
           ),
         ),
       ),
-    ),
-  );
+    );
+  }
 }
+
+enum CardPosition { leftPosition, rightPosition, unknown }
