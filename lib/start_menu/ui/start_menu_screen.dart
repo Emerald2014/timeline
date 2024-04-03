@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../ui/before_later_game_screen.dart';
+import '../../dual_game_classic/ui/before_later_game_screen.dart';
 import '../../ui/game_screen.dart';
 import '../../ui/widgets/background.dart';
 

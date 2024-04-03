@@ -6,8 +6,8 @@ import 'package:timeline/ui/widgets/card_screen.dart';
 import 'package:timeline/ui/widgets/deck_of_cards.dart';
 
 
-import '../model/models.dart';
-import '../providers/card_list.dart';
+import '../dual_game_classic/model/models.dart';
+import '../dual_game_classic/providers/card_list.dart';
 
 class GameScreen extends StatefulWidget {
   final List<GameCard> gameCardList;
@@ -74,6 +74,7 @@ class _GameScreenState extends State<GameScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: Text("Классическая игра"),),
       backgroundColor: Colors.greenAccent[200],
       body: GestureDetector(
         onTap: () {

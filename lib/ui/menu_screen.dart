@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:timeline/ui/game_screen.dart';
 
-import 'before_later_game_screen.dart';
+import '../dual_game_classic/ui/before_later_game_screen.dart';
 
 class MenuScreen extends StatefulWidget {
   @override

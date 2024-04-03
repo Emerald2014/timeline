@@ -5,19 +5,19 @@ import 'enums.dart';
 class GameCard extends Equatable {
   final String name;
   final int year;
-  late final DateTime? date;
-  late final String image;
-  late final String description;
-  late final String source;
-  late final String author;
-  late final Category category;
-  late final Geography geography;
-  late final Level level;
-  late final Century century;
-  late final int id;
+   final DateTime? date;
+   final String image;
+   final String description;
+   final String source;
+   final String author;
+   final Category category;
+   final Geography geography;
+   final Level level;
+   final Century century;
+   final int id;
 
 //Main constructor
-  GameCard(
+  const GameCard(
       {required this.name,
       required this.year,
       this.date,
@@ -46,6 +46,6 @@ class GameCard extends Equatable {
         century,
         id
       ];
-  static GameCard empty = GameCard(
+  static GameCard empty = const GameCard(
       name: '', year: -1, category: Category.all, century: Century.XXI);
 }

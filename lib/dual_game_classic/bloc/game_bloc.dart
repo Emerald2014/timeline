@@ -2,9 +2,8 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
-import 'package:timeline/model/models.dart';
 
-import '../../model/game_card.dart';
+import '../model/game_card.dart';
 import '../repository/game_repository.dart';
 
 part 'game_event.dart';
@@ -18,6 +17,7 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     on<CardInsertLaterPressed>(_onCardInsertedLater);
     on<GameRestarted>(_onGameRestarted);
     on<GameTypeSelected>(_onGameTypeSelected);
+    on<GameInitialized>(_onGameInitialized);
   }
 
   final GameRepository gameRepository;
@@ -30,23 +30,37 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     return super.close();
   }
 
-  Future<void> getInitialCard() async {
-    try {
-      gameRepository.getGameCards();
-      log("gameRepository.currentCardList = ${gameRepository.currentCardList.length}");
-      log("handGameCard: gameRepository.currentCardList[0] = ${gameRepository.currentCardList[0].name}");
-      currentTableCard = gameRepository.currentCardList[0];
-      currentHandCard = gameRepository.currentCardList[1];
-
-      emit(state.copyWith(
-          handGameCard: currentHandCard,
-          tableGameCard: currentTableCard,
-          gameStatus: GameStatus.runGame,
-          totalGameCard: gameRepository.currentCardList.length));
-    } on Exception {}
-  }
+  // Future<void> getInitialCard() async {
+  //   try {
+  //     gameRepository.getGameCards();
+  //     log("gameRepository.currentCardList = ${gameRepository.currentCardList.length}");
+  //     log("handGameCard: gameRepository.currentCardList[0] = ${gameRepository.currentCardList[0].name}");
+  //     currentTableCard = gameRepository.currentCardList[0];
+  //     currentHandCard = gameRepository.currentCardList[1];
+  //
+  //     emit(state.copyWith(
+  //         handGameCard: currentHandCard,
+  //         tableGameCard: currentTableCard,
+  //         gameStatus: GameStatus.runGame,
+  //         totalGameCard: gameRepository.currentCardList.length));
+  //   } on Exception {}
+  // }
 
   void _onCardInserted(CardInserted event, Emitter<GameState> emit) {}
+
+  void _onGameInitialized(GameInitialized event, Emitter<GameState> emit) {
+    gameRepository.getGameCards();
+    log("gameRepository.currentCardList = ${gameRepository.currentCardList.length}");
+    log("handGameCard: gameRepository.currentCardList[0] = ${gameRepository.currentCardList[0].name}");
+    currentTableCard = gameRepository.currentCardList[0];
+    currentHandCard = gameRepository.currentCardList[1];
+
+    emit(state.copyWith(
+        handGameCard: currentHandCard,
+        tableGameCard: currentTableCard,
+        gameStatus: GameStatus.runGame,
+        totalGameCard: gameRepository.currentCardList.length));
+  }
 
   void _onCardInsertedBefore(
       CardInsertBeforePressed event, Emitter<GameState> emit) {
@@ -134,15 +148,20 @@ class GameBloc extends Bloc<GameEvent, GameState> {
 
   void _onGameRestarted(GameRestarted event, Emitter<GameState> emit) {
     emit(state.copyWith(
-      gameStatus: GameStatus.initial,
+      gameStatus: GameStatus.runGame,
       gameRightAnswer: 0,
       gameWrongAnswer: 0,
     ));
     gameRepository.clearCardList();
     gameRepository.getCurrentCardList();
+    currentTableCard = gameRepository.currentCardList[0];
+    currentHandCard = gameRepository.currentCardList[1];
     emit(state.copyWith(
-        totalGameCard: gameRepository.currentCardList.length,
-        playedGameCard: 0));
+        handGameCard: currentHandCard,
+        tableGameCard: currentTableCard,
+        gameStatus: GameStatus.runGame,
+        playedGameCard: 0,
+        totalGameCard: gameRepository.currentCardList.length));
   }
 
   void _onGameTypeSelected(

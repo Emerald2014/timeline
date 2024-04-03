@@ -31,3 +31,7 @@ final class GameTypeSelected extends GameEvent {
 
   GameType gameType;
 }
+
+final class GameInitialized extends GameEvent {
+  GameInitialized();
+}

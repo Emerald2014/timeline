@@ -242,7 +242,7 @@ List<GameCard> cardListOnHand = [
       category: Category.events,
       image: "assets/first_site.jpg",
       century: Century.XX),
-  GameCard(
+  const GameCard(
       id: 4,
       name:
           "Очень жутко длинное название какого-то изобретения, что даже не влезает в одну строку. Атутещеитекстпростокрайнедлинный",

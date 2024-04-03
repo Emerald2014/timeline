@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../model/models.dart';
+import '../../dual_game_classic/model/game_card.dart';
+
 
 Widget openCard(BuildContext context, int index, List<GameCard> boardCardList) {
   GameCard openCard = boardCardList[index];

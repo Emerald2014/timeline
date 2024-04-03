@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:timeline/model/models.dart';
 
-import '../../ui/widgets/background.dart';
+import '../../../ui/widgets/background.dart';
 import '../bloc/game_bloc.dart';
+import '../model/models.dart';
 import '../repository/game_repository.dart';
 
 class BeforeLaterGameScreen extends StatelessWidget {
@@ -15,7 +15,7 @@ class BeforeLaterGameScreen extends StatelessWidget {
     return BlocProvider(
         create: (context) => GameBloc(gameRepository: GameRepository()),
         // create: (context) => GameBloc(gameRepository: context.read<GameRepository>()),
-        child: BeforeLaterGameView());
+        child: const BeforeLaterGameView());
   }
 }
 
@@ -29,14 +29,15 @@ class BeforeLaterGameView extends StatefulWidget {
 class _BeforeLaterGameViewState extends State<BeforeLaterGameView> {
   @override
   void initState() {
-    context.read<GameBloc>().getInitialCard();
+    context.read<GameBloc>().add(GameInitialized());
+    // context.read<GameBloc>().getInitialCard();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Игра Раньше-позже")),
+      appBar: AppBar(title: const Text("Игра Раньше-позже")),
       body: BlocBuilder<GameBloc, GameState>(
           // listener: (context, state) {},
           builder: (context, state) {
@@ -109,9 +110,9 @@ class SelectGameType extends StatelessWidget {
 }
 
 class FirstGameType extends StatelessWidget {
-  FirstGameType({super.key, required this.state});
+  const FirstGameType({super.key, required this.state});
 
-  GameState state;
+  final GameState state;
 
   @override
   Widget build(BuildContext context) {
@@ -154,9 +155,9 @@ class FirstGameType extends StatelessWidget {
 }
 
 class SecondGameType extends StatelessWidget {
-  SecondGameType({super.key, required this.state});
+  const SecondGameType({super.key, required this.state});
 
-  GameState state;
+  final GameState state;
 
   @override
   Widget build(BuildContext context) {
@@ -211,9 +212,9 @@ class SecondGameType extends StatelessWidget {
 }
 
 class ThirdGameType extends StatelessWidget {
-  ThirdGameType({super.key, required this.state});
+  const ThirdGameType({super.key, required this.state});
 
-  GameState state;
+  final GameState state;
 
   @override
   Widget build(BuildContext context) {
@@ -268,9 +269,9 @@ class ThirdGameType extends StatelessWidget {
 }
 
 class IsRightAnswer extends StatelessWidget {
-  IsRightAnswer(this.state);
+  const IsRightAnswer(this.state, {super.key});
 
-  GameState state;
+  final GameState state;
 
   @override
   Widget build(BuildContext context) {
@@ -301,23 +302,21 @@ class IsRightAnswer extends StatelessWidget {
 }
 
 class CardCount extends StatelessWidget {
-  CardCount(
+  const CardCount(
       {super.key, required this.totalGameCard, required this.playedGameCard});
 
-  int totalGameCard;
-  int playedGameCard;
-
-  double _currentIndicatorPosition = 0;
+  final int totalGameCard;
+  final int playedGameCard;
 
   @override
   Widget build(BuildContext context) {
-    _currentIndicatorPosition =
+    double currentIndicatorPosition =
         1 - (1 / totalGameCard * (totalGameCard - playedGameCard));
 
     return Stack(
       children: [
         LinearProgressIndicator(
-          value: _currentIndicatorPosition,
+          value: currentIndicatorPosition,
           minHeight: 24,
           color: Colors.orange,
           backgroundColor: Colors.yellowAccent,
@@ -335,9 +334,9 @@ class CardCount extends StatelessWidget {
 }
 
 class TextQuestion extends StatelessWidget {
-  TextQuestion({super.key, required this.tableCard});
+  const TextQuestion({super.key, required this.tableCard});
 
-  GameCard tableCard;
+  final GameCard tableCard;
 
   @override
   Widget build(BuildContext context) {
@@ -359,15 +358,15 @@ class TextQuestion extends StatelessWidget {
 }
 
 class EndGameView extends StatelessWidget {
-  EndGameView(
+  const EndGameView(
       {super.key,
       required this.gameRightAnswer,
       required this.gameWrongAnswer,
       required this.state});
 
-  int gameRightAnswer;
-  int gameWrongAnswer;
-  GameState state;
+  final int gameRightAnswer;
+  final int gameWrongAnswer;
+  final GameState state;
 
   @override
   Widget build(BuildContext context) {
@@ -396,13 +395,13 @@ class EndGameView extends StatelessWidget {
 }
 
 class Score extends StatelessWidget {
-  Score(
+  const Score(
       {super.key,
       required this.gameRightAnswer,
       required this.gameWrongAnswer});
 
-  int gameRightAnswer;
-  int gameWrongAnswer;
+  final int gameRightAnswer;
+  final int gameWrongAnswer;
 
   @override
   Widget build(BuildContext context) {
@@ -446,9 +445,9 @@ class Score extends StatelessWidget {
 }
 
 class GameTableView extends StatelessWidget {
-  GameTableView({required this.firstGameCard, super.key});
+  const GameTableView({required this.firstGameCard, super.key});
 
-  GameCard firstGameCard;
+  final GameCard firstGameCard;
 
   @override
   Widget build(BuildContext context) {
@@ -466,9 +465,9 @@ class GameTableView extends StatelessWidget {
 }
 
 class LeftGameCard extends StatelessWidget {
-  LeftGameCard({required this.gameCard, super.key});
+  const LeftGameCard({required this.gameCard, super.key});
 
-  GameCard gameCard;
+  final GameCard gameCard;
 
   @override
   Widget build(BuildContext context) {
@@ -481,9 +480,9 @@ class LeftGameCard extends StatelessWidget {
 }
 
 class RightGameCard extends StatelessWidget {
-  RightGameCard({required this.gameCard, super.key});
+  const RightGameCard({required this.gameCard, super.key});
 
-  GameCard gameCard;
+  final GameCard gameCard;
 
   @override
   Widget build(BuildContext context) {
@@ -496,9 +495,9 @@ class RightGameCard extends StatelessWidget {
 }
 
 class GameHandView extends StatelessWidget {
-  GameHandView({required this.firstGameCard, super.key});
+  const GameHandView({required this.firstGameCard, super.key});
 
-  GameCard firstGameCard;
+  final GameCard firstGameCard;
 
   @override
   Widget build(BuildContext context) {
@@ -540,17 +539,17 @@ class Actions extends StatelessWidget {
 }
 
 class GameCardView extends StatelessWidget {
-  GameCardView(
+  const GameCardView(
       {super.key,
       required this.gameCard,
       this.isYearVisible = false,
       this.isClickable = false,
       required this.cardPosition});
 
-  GameCard gameCard;
-  bool isYearVisible;
-  bool isClickable;
-  CardPosition cardPosition;
+  final GameCard gameCard;
+  final bool isYearVisible;
+  final bool isClickable;
+  final CardPosition cardPosition;
 
   @override
   Widget build(BuildContext context) {
