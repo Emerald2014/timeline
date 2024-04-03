@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:timeline/ui/widgets/drop_down.dart';
 
 import '../dual_game_classic/model/models.dart';
-import '../dual_game_classic/model/settings.dart';
+import '../settings/model/settings.dart';
 
 import '../dual_game_classic/providers/card_list.dart';
 import 'game_screen.dart';

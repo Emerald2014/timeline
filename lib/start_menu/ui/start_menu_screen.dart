@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:timeline/holiday_game/ui/holiday_game_screen.dart';
 
 import '../../dual_game_classic/ui/before_later_game_screen.dart';
 import '../../ui/game_screen.dart';
@@ -44,6 +45,12 @@ class StartMenuView extends StatelessWidget {
                           builder: (context) => const BeforeLaterGameScreen()));
                     },
                     child: const Text("Игра \"Раньше-позже\"")),
+                ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => const HolidayGameScreen()));
+                    },
+                    child: const Text("Игра \"Праздники\"")),
               ],
             ),
           ),

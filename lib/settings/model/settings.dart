@@ -1,4 +1,4 @@
-import 'enums.dart';
+import '../../dual_game_classic/model/enums.dart';
 
 class Settings {
   final List<Category> category;
