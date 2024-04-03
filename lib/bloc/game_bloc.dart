@@ -82,10 +82,14 @@ class GameBloc extends Bloc<GameEvent, GameState> {
 
     gameRepository.removeCardFromList(currentTableCard!.name);
     gameRepository.removeCardFromList(currentHandCard!.name);
-    currentTableCard = gameRepository.currentCardList[0];
-    currentHandCard = gameRepository.currentCardList[1];
-    emit(state.copyWith(
-        handGameCard: currentHandCard, tableGameCard: currentTableCard));
+    if (cardListIsEmpty()) {
+      emit(state.copyWith(gameStatus: GameStatus.endGame));
+    } else {
+      currentTableCard = gameRepository.currentCardList[0];
+      currentHandCard = gameRepository.currentCardList[1];
+      emit(state.copyWith(
+          handGameCard: currentHandCard, tableGameCard: currentTableCard));
+    }
   }
 
   void _onGameRestarted(GameRestarted event, Emitter<GameState> emit) {

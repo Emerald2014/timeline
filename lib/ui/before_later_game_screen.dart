@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:timeline/model/enums.dart';
+import 'package:timeline/model/models.dart';
 
 import '../../ui/widgets/background.dart';
 import '../bloc/game_bloc.dart';
-import '../model/game_card.dart';
 import '../repository/game_repository.dart';
 
 class BeforeLaterGameScreen extends StatelessWidget {
@@ -28,12 +27,12 @@ class BeforeLaterGameView extends StatefulWidget {
 }
 
 class _BeforeLaterGameViewState extends State<BeforeLaterGameView> {
-
   @override
   void initState() {
     context.read<GameBloc>().getInitialCard();
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,16 +61,18 @@ class _BeforeLaterGameViewState extends State<BeforeLaterGameView> {
                   Score(
                       gameRightAnswer: state.gameRightAnswer,
                       gameWrongAnswer: state.gameWrongAnswer),
-                  GameTableView(
-                      firstGameCard: state.tableGameCard ??
+                  GameHandView(
+                      firstGameCard: state.handGameCard ??
                           GameCard(
                               name: "name",
                               year: -2,
                               category: Category.events,
                               century: Century.XXI)),
+                  TextQuestion(tableCard: state.tableGameCard!),
                   const Center(child: Actions()),
-                  GameHandView(
-                      firstGameCard: state.handGameCard ??
+                  Divider(),
+                  GameTableView(
+                      firstGameCard: state.tableGameCard ??
                           GameCard(
                               name: "name",
                               year: -2,
@@ -85,6 +86,30 @@ class _BeforeLaterGameViewState extends State<BeforeLaterGameView> {
           );
         }
       }),
+    );
+  }
+}
+
+class TextQuestion extends StatelessWidget {
+  TextQuestion({super.key, required this.tableCard});
+
+  GameCard tableCard;
+
+  @override
+  Widget build(BuildContext context) {
+    return RichText(
+      textAlign: TextAlign.center,
+      text: TextSpan(
+        text: 'Это событие произошло раньше или позже, чем \n',
+        style: DefaultTextStyle.of(context).style,
+        children: <TextSpan>[
+          TextSpan(
+            text: "${tableCard.name} (${tableCard.year})?",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          ),
+          // TextSpan(text: '?'),
+        ],
+      ),
     );
   }
 }
@@ -165,7 +190,7 @@ class GameTableView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [card(firstGameCard)],
+      children: [card(firstGameCard, true)],
     );
   }
 }
@@ -179,7 +204,7 @@ class GameHandView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [card(firstGameCard)],
+      children: [card(firstGameCard, false)],
     );
   }
 }
@@ -209,7 +234,7 @@ class Actions extends StatelessWidget {
   }
 }
 
-Widget card(GameCard gameCard) {
+Widget card(GameCard gameCard, bool isYearVisible) {
   return Center(
     child: Card(
       child: SizedBox(
@@ -225,11 +250,13 @@ Widget card(GameCard gameCard) {
                   textAlign: TextAlign.center,
                 ),
               ),
-              Text(
-                gameCard.year.toString(),
-                style: TextStyle(fontSize: 10),
-                textAlign: TextAlign.center,
-              ),
+              isYearVisible
+                  ? Text(
+                      gameCard.year.toString(),
+                      style: TextStyle(fontSize: 10),
+                      textAlign: TextAlign.center,
+                    )
+                  : Text(""),
               Image.asset(
                 gameCard.image,
                 height: 100,
