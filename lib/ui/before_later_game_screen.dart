@@ -153,35 +153,72 @@ class SecondGameType extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(children: [
       const Background(),
-      Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          CardCount(
-            totalGameCard: state.totalGameCard,
-            playedGameCard: state.playedGameCard,
-          ),
-          Score(
-              gameRightAnswer: state.gameRightAnswer,
-              gameWrongAnswer: state.gameWrongAnswer),
-          Text(
-            "Что раньше?",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              LeftGameCard(gameCard: state.handGameCard!),
-              Text(
-                "ИЛИ",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              RightGameCard(gameCard: state.tableGameCard!)
-            ],
-          )
-        ],
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                CardCount(
+                  totalGameCard: state.totalGameCard,
+                  playedGameCard: state.playedGameCard,
+                ),
+                Score(
+                    gameRightAnswer: state.gameRightAnswer,
+                    gameWrongAnswer: state.gameWrongAnswer),
+              ],
+            ),
+            if (state.playedGameCard != 0) IsRightAnswer(state),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  "Что раньше?",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    LeftGameCard(gameCard: state.handGameCard!),
+                    Text(
+                      "ИЛИ",
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    RightGameCard(gameCard: state.tableGameCard!)
+                  ],
+                )
+              ],
+            ),
+            SizedBox(),
+          ],
+        ),
       )
     ]);
+  }
+}
+
+class IsRightAnswer extends StatelessWidget {
+  IsRightAnswer(this.state);
+
+  GameState state;
+
+  @override
+  Widget build(BuildContext context) {
+    return state.rightAnswer
+        ? Text(
+            "Верно!",
+            style: TextStyle(
+                fontWeight: FontWeight.bold, fontSize: 36, color: Colors.green),
+          )
+        : Text("НЕ верно!",
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 36,
+                color: Colors.deepOrange));
   }
 }
 
@@ -192,21 +229,30 @@ class CardCount extends StatelessWidget {
   int totalGameCard;
   int playedGameCard;
 
+  double _stepIndicator = 0;
+  double _currentIndicatorPosition = 0;
+
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
+    _currentIndicatorPosition =
+        (1 / totalGameCard * (totalGameCard - playedGameCard));
+
+    return Column(
       children: [
-        Text(
-          "Карт в игре: $totalGameCard",
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        LinearProgressIndicator(
+          value: _currentIndicatorPosition,
+          minHeight: 20,
+          color: Colors.orange,
+          backgroundColor: Colors.yellowAccent,
         ),
-        Text(
-          "Осталось: ${totalGameCard - playedGameCard}",
-          style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.deepOrange),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Text(
+              "Карт осталось: ${totalGameCard - playedGameCard} / $totalGameCard",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+          ],
         ),
       ],
     );

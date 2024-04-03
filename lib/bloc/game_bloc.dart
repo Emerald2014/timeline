@@ -51,9 +51,11 @@ class GameBloc extends Bloc<GameEvent, GameState> {
       CardInsertBeforePressed event, Emitter<GameState> emit) {
     log('TL _onCardInsertedBefore');
     if (compareYearCard(ChooseButton.before)) {
-      emit(state.copyWith(gameRightAnswer: state.gameRightAnswer + 1));
+      emit(state.copyWith(
+          gameRightAnswer: state.gameRightAnswer + 1, rightAnswer: true));
     } else {
-      emit(state.copyWith(gameWrongAnswer: state.gameWrongAnswer + 1));
+      emit(state.copyWith(
+          gameWrongAnswer: state.gameWrongAnswer + 1, rightAnswer: false));
     }
 
     gameRepository.removeCardFromList(currentTableCard!.name);
@@ -73,9 +75,11 @@ class GameBloc extends Bloc<GameEvent, GameState> {
   void _onCardInsertedLater(
       CardInsertLaterPressed event, Emitter<GameState> emit) async {
     if (compareYearCard(ChooseButton.later)) {
-      emit(state.copyWith(gameRightAnswer: state.gameRightAnswer + 1));
+      emit(state.copyWith(
+          gameRightAnswer: state.gameRightAnswer + 1, rightAnswer: true));
     } else {
-      emit(state.copyWith(gameWrongAnswer: state.gameWrongAnswer + 1));
+      emit(state.copyWith(
+          gameWrongAnswer: state.gameWrongAnswer + 1, rightAnswer: false));
     }
 
     gameRepository.removeCardFromList(currentTableCard!.name);

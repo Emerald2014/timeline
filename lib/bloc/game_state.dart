@@ -1,16 +1,16 @@
 part of 'game_bloc.dart';
 
 class GameState {
-  const GameState({
-    this.tableGameCard,
-    this.handGameCard,
-    this.gameStatus = GameStatus.initial,
-    this.gameType = GameType.selectedType,
-    this.gameRightAnswer = 0,
-    this.gameWrongAnswer = 0,
-    this.totalGameCard = 0,
-    this.playedGameCard = 0,
-  });
+  const GameState(
+      {this.tableGameCard,
+      this.handGameCard,
+      this.gameStatus = GameStatus.initial,
+      this.gameType = GameType.selectedType,
+      this.gameRightAnswer = 0,
+      this.gameWrongAnswer = 0,
+      this.totalGameCard = 0,
+      this.playedGameCard = 0,
+      this.rightAnswer = false});
 
   final GameCard? tableGameCard;
   final GameCard? handGameCard;
@@ -20,6 +20,7 @@ class GameState {
   final int gameWrongAnswer;
   final int totalGameCard;
   final int playedGameCard;
+  final bool rightAnswer;
 
   GameState copyWith(
       {GameCard? tableGameCard,
@@ -29,7 +30,8 @@ class GameState {
       int? gameRightAnswer,
       int? gameWrongAnswer,
       int? totalGameCard,
-      int? playedGameCard}) {
+      int? playedGameCard,
+      bool? rightAnswer}) {
     return GameState(
       tableGameCard: tableGameCard ?? this.tableGameCard,
       handGameCard: handGameCard ?? this.handGameCard,
@@ -39,6 +41,7 @@ class GameState {
       gameWrongAnswer: gameWrongAnswer ?? this.gameWrongAnswer,
       totalGameCard: totalGameCard ?? this.totalGameCard,
       playedGameCard: playedGameCard ?? this.playedGameCard,
+      rightAnswer: rightAnswer ?? this.rightAnswer,
     );
   }
 }
