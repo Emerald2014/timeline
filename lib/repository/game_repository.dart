@@ -10,9 +10,15 @@ class GameRepository {
   final GameLocalStorageApiClient _gameLocalStorageApiClient;
 
   List<GameCard> currentCardList = [];
+  final List<GameCard> _currentFullCardList = [];
 
   Future<void> getGameCards() async {
-    currentCardList = _gameLocalStorageApiClient.getCardsFromLocal();
+    _currentFullCardList.addAll(_gameLocalStorageApiClient.getCardsFromLocal());
+    getCurrentCardList();
+  }
+
+  void getCurrentCardList() {
+    currentCardList.addAll(_currentFullCardList);
     currentCardList.shuffle();
   }
 

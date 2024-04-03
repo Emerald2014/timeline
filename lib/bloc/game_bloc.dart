@@ -95,7 +95,7 @@ class GameBloc extends Bloc<GameEvent, GameState> {
       gameWrongAnswer: 0,
     ));
     gameRepository.clearCardList();
-    getInitialCard();
+    gameRepository.getCurrentCardList();
   }
 
   bool compareYearCard(ChooseButton button) {

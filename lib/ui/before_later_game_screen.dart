@@ -28,6 +28,12 @@ class BeforeLaterGameView extends StatefulWidget {
 }
 
 class _BeforeLaterGameViewState extends State<BeforeLaterGameView> {
+
+  @override
+  void initState() {
+    context.read<GameBloc>().getInitialCard();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,9 +43,9 @@ class _BeforeLaterGameViewState extends State<BeforeLaterGameView> {
       body: BlocBuilder<GameBloc, GameState>(
           // listener: (context, state) {},
           builder: (context, state) {
-        if (state.gameStatus == GameStatus.initial) {
-          context.read<GameBloc>().getInitialCard();
-        }
+        // if (state.gameStatus == GameStatus.initial) {
+        //   context.read<GameBloc>().getInitialCard();
+        // }
         if (state.gameStatus == GameStatus.endGame) {
           return EndGameView(
               gameRightAnswer: state.gameRightAnswer,
