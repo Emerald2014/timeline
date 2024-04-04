@@ -5,16 +5,16 @@ import 'enums.dart';
 class GameCard extends Equatable {
   final String name;
   final int year;
-   final DateTime? date;
-   final String image;
-   final String description;
-   final String source;
-   final String author;
-   final Category category;
-   final Geography geography;
-   final Level level;
-   final Century century;
-   final int id;
+  final DateTime? date;
+  final String image;
+  final String description;
+  final String source;
+  final String author;
+  final Category category;
+  final Geography geography;
+  final Level level;
+  final Century century;
+  final int id;
 
 //Main constructor
   const GameCard(
