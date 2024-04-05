@@ -7,7 +7,7 @@ import 'package:timeline/ui/widgets/deck_of_cards.dart';
 
 
 import '../dual_game_classic/model/models.dart';
-import '../dual_game_classic/providers/card_list.dart';
+import '../dual_game_classic/database/card_list.dart';
 
 class GameScreen extends StatefulWidget {
   final List<GameCard> gameCardList;

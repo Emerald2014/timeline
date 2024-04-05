@@ -4,7 +4,7 @@ import 'package:timeline/ui/widgets/drop_down.dart';
 import '../dual_game_classic/model/models.dart';
 import '../settings/model/settings.dart';
 
-import '../dual_game_classic/providers/card_list.dart';
+import '../dual_game_classic/database/card_list.dart';
 import 'game_screen.dart';
 
 class SettingScreen extends StatefulWidget {

@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../ui/widgets/background.dart';
+import '../bloc/database_bloc.dart';
+import '../bloc/database_state.dart';
 import '../bloc/game_bloc.dart';
 import '../model/models.dart';
-import '../repository/game_repository.dart';
 
 class BeforeLaterGameScreen extends StatelessWidget {
   const BeforeLaterGameScreen({super.key});
@@ -12,8 +13,14 @@ class BeforeLaterGameScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // return BeforeLaterGameScreen();
-    return BlocProvider(
-        create: (context) => GameBloc(gameRepository: GameRepository()),
+    return MultiBlocProvider(
+        providers: [
+          BlocProvider<DatabaseBloc>(
+              create: (context) => DatabaseBloc()..initDatabase()),
+          // BlocProvider<GameBloc>(
+          //   create: (context) => GameBloc(database: context.read<DatabaseBloc>().database!),
+          // )
+        ],
         // create: (context) => GameBloc(gameRepository: context.read<GameRepository>()),
         child: const BeforeLaterGameView());
   }
@@ -29,41 +36,64 @@ class BeforeLaterGameView extends StatefulWidget {
 class _BeforeLaterGameViewState extends State<BeforeLaterGameView> {
   @override
   void initState() {
-    context.read<GameBloc>().add(GameInitialized());
+    // context.read<GameBloc>().add(GameInitialized());
     // context.read<GameBloc>().getInitialCard();
+    // context.read<DatabaseBloc>().initDatabase();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Игра Раньше-позже")),
-      body: BlocBuilder<GameBloc, GameState>(
-          // listener: (context, state) {},
-          builder: (context, state) {
-        // if (state.gameStatus == GameStatus.initial) {
-        //   context.read<GameBloc>().getInitialCard();
-        // }
+        appBar: AppBar(title: const Text("Игра Раньше-позже")),
+        body: BlocConsumer<DatabaseBloc, DatabaseState>(
+            builder: (context, state) {
+              if (state is LoadDatabaseState) {
+                final _gameBloc =
+                    GameBloc(database: context.read<DatabaseBloc>().database!);
+                return BlocProvider<GameBloc>(
+                  create: (context) => _gameBloc,
+                  child: const Center(
+                    child: Text('Database loaded AGAIN'),
+                  ),
+                );
+                return const Center(
+                  child: Text('Database loaded'),
+                );
+              } else {
+                return const Center(
+                  child: Text('Database NOT loaded'),
+                );
+              }
+            },
+            listener: (context, state) {})
 
-        if (state.gameStatus == GameStatus.endGame) {
-          return EndGameView(
-              gameRightAnswer: state.gameRightAnswer,
-              gameWrongAnswer: state.gameWrongAnswer,
-              state: state);
-        } else {
-          switch (state.gameType) {
-            case GameType.selectedType:
-              return SelectGameType();
-            case GameType.firstType:
-              return FirstGameType(state: state);
-            case GameType.secondType:
-              return SecondGameType(state: state);
-            case GameType.thirdType:
-              return ThirdGameType(state: state);
-          }
-        }
-      }),
-    );
+        // BlocBuilder<GameBloc, GameState>(
+        //     // listener: (context, state) {},
+        //     builder: (context, state) {
+        //   // if (state.gameStatus == GameStatus.initial) {
+        //   //   context.read<GameBloc>().getInitialCard();
+        //   // }
+        //
+        //   if (state.gameStatus == GameStatus.endGame) {
+        //     return EndGameView(
+        //         gameRightAnswer: state.gameRightAnswer,
+        //         gameWrongAnswer: state.gameWrongAnswer,
+        //         state: state);
+        //   } else {
+        //     switch (state.gameType) {
+        //       case GameType.selectedType:
+        //         return SelectGameType();
+        //       case GameType.firstType:
+        //         return FirstGameType(state: state);
+        //       case GameType.secondType:
+        //         return SecondGameType(state: state);
+        //       case GameType.thirdType:
+        //         return ThirdGameType(state: state);
+        //     }
+        //   }
+        // }),
+        );
   }
 }
 

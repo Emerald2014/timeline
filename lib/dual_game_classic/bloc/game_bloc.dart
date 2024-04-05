@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
+import 'package:sqflite/sqflite.dart';
 
 import '../model/game_card.dart';
 import '../repository/game_repository.dart';
@@ -11,7 +12,7 @@ part 'game_event.dart';
 part 'game_state.dart';
 
 class GameBloc extends Bloc<GameEvent, GameState> {
-  GameBloc({required this.gameRepository}) : super(const GameState()) {
+  GameBloc({required this.database}) : super(const GameState()) {
     on<CardInserted>(_onCardInserted);
     on<CardInsertBeforePressed>(_onCardInsertedBefore);
     on<CardInsertLaterPressed>(_onCardInsertedLater);
@@ -20,7 +21,8 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     on<GameInitialized>(_onGameInitialized);
   }
 
-  final GameRepository gameRepository;
+  final gameRepository = GameRepository();
+  final Database database;
   GameCard? currentTableCard;
   GameCard? currentHandCard;
 
@@ -28,6 +30,10 @@ class GameBloc extends Bloc<GameEvent, GameState> {
   Future<void> close() {
     // _tickerSubscription?.cancel();
     return super.close();
+  }
+  
+  Future<void> getCards() async {
+    await gameRepository.getGameCards2(database: database);
   }
 
   // Future<void> getInitialCard() async {

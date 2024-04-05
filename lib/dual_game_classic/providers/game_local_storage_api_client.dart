@@ -1,10 +1,10 @@
 import '../model/game_card.dart';
-import 'card_list.dart';
+import '../database/card_list.dart';
 
 class GameLocalStorageApiClient {
   GameLocalStorageApiClient();
 
-  List<GameCard> getCardsFromLocal() {
+  List<GameCard> getAllCards() {
     return cardListOnHand;
   }
 }

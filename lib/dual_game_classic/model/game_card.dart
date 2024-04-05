@@ -25,10 +25,10 @@ class GameCard extends Equatable {
       this.description = "",
       this.source = "",
       this.author = "",
-      required this.category,
+      this.category = Category.all,
       this.geography = Geography.allWorld,
       this.level = Level.hard,
-      required this.century,
+      this.century = Century.all,
       this.id = 0});
 
   @override

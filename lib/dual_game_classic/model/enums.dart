@@ -24,6 +24,7 @@ enum Category {
 }
 
 enum Century {
+  all("All"),
   XXI("XXI"),
   XX("XX"),
   XIX("XIX"),
