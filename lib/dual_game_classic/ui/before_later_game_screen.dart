@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -12,17 +14,10 @@ class BeforeLaterGameScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // return BeforeLaterGameScreen();
-    return MultiBlocProvider(
-        providers: [
-          BlocProvider<DatabaseBloc>(
-              create: (context) => DatabaseBloc()..initDatabase()),
-          // BlocProvider<GameBloc>(
-          //   create: (context) => GameBloc(database: context.read<DatabaseBloc>().database!),
-          // )
-        ],
-        // create: (context) => GameBloc(gameRepository: context.read<GameRepository>()),
-        child: const BeforeLaterGameView());
+    return MultiBlocProvider(providers: [
+      BlocProvider<DatabaseBloc>(
+          create: (context) => DatabaseBloc()..initDatabase()),
+    ], child: const BeforeLaterGameView());
   }
 }
 
@@ -36,9 +31,6 @@ class BeforeLaterGameView extends StatefulWidget {
 class _BeforeLaterGameViewState extends State<BeforeLaterGameView> {
   @override
   void initState() {
-    // context.read<GameBloc>().add(GameInitialized());
-    // context.read<GameBloc>().getInitialCard();
-    // context.read<DatabaseBloc>().initDatabase();
     super.initState();
   }
 
@@ -46,54 +38,47 @@ class _BeforeLaterGameViewState extends State<BeforeLaterGameView> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: const Text("Игра Раньше-позже")),
-        body: BlocConsumer<DatabaseBloc, DatabaseState>(
-            builder: (context, state) {
-              if (state is LoadDatabaseState) {
-                final _gameBloc =
-                    GameBloc(database: context.read<DatabaseBloc>().database!);
-                return BlocProvider<GameBloc>(
-                  create: (context) => _gameBloc,
-                  child: const Center(
-                    child: Text('Database loaded AGAIN'),
-                  ),
-                );
-                return const Center(
-                  child: Text('Database loaded'),
-                );
-              } else {
-                return const Center(
-                  child: Text('Database NOT loaded'),
-                );
-              }
-            },
-            listener: (context, state) {})
+        body: BlocBuilder<DatabaseBloc, DatabaseState>(
+          builder: (context, state) {
+            if (state is LoadDatabaseState) {
+              final gameBloc =
+                  GameBloc(database: context.read<DatabaseBloc>().database!);
+              return BlocProvider<GameBloc>(
+                  create: (context) => gameBloc,
+                  child: BlocBuilder<GameBloc, GameState>(
+                      builder: (context, state) {
+                    if (state.gameStatus == GameStatus.initial) {
+                      context.read<GameBloc>().add(GameInitialized());
+                    }
+                    if (state.gameStatus == GameStatus.loadingDatabase) {
+                      // context.read<GameBloc>().add(GameRestarted());
+                      log("GameStatus.loadingDatabase");
 
-        // BlocBuilder<GameBloc, GameState>(
-        //     // listener: (context, state) {},
-        //     builder: (context, state) {
-        //   // if (state.gameStatus == GameStatus.initial) {
-        //   //   context.read<GameBloc>().getInitialCard();
-        //   // }
-        //
-        //   if (state.gameStatus == GameStatus.endGame) {
-        //     return EndGameView(
-        //         gameRightAnswer: state.gameRightAnswer,
-        //         gameWrongAnswer: state.gameWrongAnswer,
-        //         state: state);
-        //   } else {
-        //     switch (state.gameType) {
-        //       case GameType.selectedType:
-        //         return SelectGameType();
-        //       case GameType.firstType:
-        //         return FirstGameType(state: state);
-        //       case GameType.secondType:
-        //         return SecondGameType(state: state);
-        //       case GameType.thirdType:
-        //         return ThirdGameType(state: state);
-        //     }
-        //   }
-        // }),
-        );
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if (state.gameStatus == GameStatus.endGame) {
+                      return EndGameView(
+                          gameRightAnswer: state.gameRightAnswer,
+                          gameWrongAnswer: state.gameWrongAnswer,
+                          state: state);
+                    } else {
+                      switch (state.gameType) {
+                        case GameType.selectedType:
+                          return const SelectGameType();
+                        case GameType.firstType:
+                          return FirstGameType(state: state);
+                        case GameType.secondType:
+                          return SecondGameType(state: state);
+                        case GameType.thirdType:
+                          return ThirdGameType(state: state);
+                      }
+                    }
+                  }));
+            } else {
+              return const Center(child: CircularProgressIndicator());
+            }
+          },
+        ));
   }
 }
 
@@ -248,6 +233,7 @@ class ThirdGameType extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    log("state ThirdGameType = $state");
     return Stack(children: [
       const Background(),
       Padding(

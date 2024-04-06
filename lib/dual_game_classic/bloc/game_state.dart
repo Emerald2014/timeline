@@ -50,6 +50,6 @@ class GameState {
   }
 }
 
-enum GameStatus { initial, runGame, endGame }
+enum GameStatus { initial, runGame, endGame, loadingDatabase }
 
 enum GameType { selectedType, firstType, secondType, thirdType }

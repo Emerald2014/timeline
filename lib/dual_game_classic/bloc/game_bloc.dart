@@ -28,44 +28,30 @@ class GameBloc extends Bloc<GameEvent, GameState> {
 
   @override
   Future<void> close() {
-    // _tickerSubscription?.cancel();
     return super.close();
   }
-  
-  Future<void> getCards() async {
-    await gameRepository.getGameCards2(database: database);
-  }
-
-  // Future<void> getInitialCard() async {
-  //   try {
-  //     gameRepository.getGameCards();
-  //     log("gameRepository.currentCardList = ${gameRepository.currentCardList.length}");
-  //     log("handGameCard: gameRepository.currentCardList[0] = ${gameRepository.currentCardList[0].name}");
-  //     currentTableCard = gameRepository.currentCardList[0];
-  //     currentHandCard = gameRepository.currentCardList[1];
-  //
-  //     emit(state.copyWith(
-  //         handGameCard: currentHandCard,
-  //         tableGameCard: currentTableCard,
-  //         gameStatus: GameStatus.runGame,
-  //         totalGameCard: gameRepository.currentCardList.length));
-  //   } on Exception {}
-  // }
 
   void _onCardInserted(CardInserted event, Emitter<GameState> emit) {}
 
-  void _onGameInitialized(GameInitialized event, Emitter<GameState> emit) {
-    gameRepository.getGameCards();
-    log("gameRepository.currentCardList = ${gameRepository.currentCardList.length}");
-    log("handGameCard: gameRepository.currentCardList[0] = ${gameRepository.currentCardList[0].name}");
-    currentTableCard = gameRepository.currentCardList[0];
-    currentHandCard = gameRepository.currentCardList[1];
-
-    emit(state.copyWith(
-        handGameCard: currentHandCard,
-        tableGameCard: currentTableCard,
-        gameStatus: GameStatus.runGame,
-        totalGameCard: gameRepository.currentCardList.length));
+  Future<void> _onGameInitialized(
+      GameInitialized event, Emitter<GameState> emit) async {
+    emit(state.copyWith(gameStatus: GameStatus.loadingDatabase));
+    try {
+      await gameRepository.getGameCards2(database: database);
+      if (gameRepository.currentCardList.isNotEmpty) {
+        currentTableCard = gameRepository.currentCardList[0];
+        currentHandCard = gameRepository.currentCardList[1];
+        emit(state.copyWith(
+            handGameCard: currentHandCard,
+            tableGameCard: currentTableCard,
+            gameStatus: GameStatus.runGame,
+            totalGameCard: gameRepository.currentCardList.length));
+      } else {
+        emit(state.copyWith(gameStatus: GameStatus.initial));
+      }
+    } catch (e) {
+      log("_onGameInitialized = $e");
+    }
   }
 
   void _onCardInsertedBefore(

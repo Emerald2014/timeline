@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:timeline/dual_game_classic/database/card_list.dart';
+import 'package:timeline/dual_game_classic/model/game_card.dart';
 
 import 'database_state.dart';
 
@@ -13,7 +15,7 @@ class DatabaseBloc extends Cubit<DatabaseState> {
 
   Future<void> initDatabase() async {
     final databasePath = await getDatabasesPath();
-    final path = join(databasePath, 'game123.db');
+    final path = join(databasePath, 'dual_game.db');
     try {
       await Directory(dirname(path)).create(recursive: true);
       database =
@@ -22,7 +24,7 @@ class DatabaseBloc extends Cubit<DatabaseState> {
           'CREATE TABLE game_card(id INTEGER PRIMARY KEY AUTOINCREMENT, '
           'name TEXT, '
           'year INTEGER, '
-          'date DATETIME,'
+          'date TEXT,'
           'image TEXT,'
           'description TEXT,'
           'source TEXT,'
@@ -58,9 +60,30 @@ class DatabaseBloc extends Cubit<DatabaseState> {
           ')',
         );
       });
+
+      addAllCardFromLocal();
       emit(LoadDatabaseState());
     } catch (e) {
       log("error $e");
     }
+  }
+
+  Future<int?> insert<T extends GameCard>(T model) async =>
+      await database?.insert(
+        "game_card", // Получаем имя рабочей таблицы
+        model.toMap(), // Переводим наш объект в мапу для вставки
+        conflictAlgorithm: null, // Что должно происходить при конфликте вставки
+        nullColumnHack:
+            null, // Что делать, если not null столбец приходит как null
+      );
+
+  addAllCardFromLocal() async {
+    await database?.transaction((txn) async {
+      await txn.rawInsert("DELETE FROM game_card");
+      for (var card in cardListOnHand) {
+        log("insert date ${card.date.toString()}");
+        insert(card);
+      }
+    });
   }
 }
